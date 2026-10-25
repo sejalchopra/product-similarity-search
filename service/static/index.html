@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Product Similarity Demo</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <div class="wrap">
+    <h1>Product Similarity Demo</h1>
+    <p class="hint">OpenAPI reference: <a href="/docs">/docs</a></p>
+
+    <div class="toolbar">
+      <div class="search-wrap">
+        <input type="search" id="search" placeholder="Search by product name…" autocomplete="off" />
+        <div class="dropdown" id="dropdown"></div>
+      </div>
+      <button type="button" class="primary" id="btn-search">Search</button>
+      <button type="button" id="btn-random">Random product</button>
+      <span class="spinner" id="spinner" aria-hidden="true"></span>
+    </div>
+
+    <div class="controls">
+      <label>Top N
+        <select id="num-similar">
+          <option value="20">20</option>
+          <option value="50">50</option>
+          <option value="100" selected>100</option>
+          <option value="200">200</option>
+        </select>
+      </label>
+      <label><input type="checkbox" id="mask-brand" /> Hide brand</label>
+      <label><input type="checkbox" id="mask-image" /> Hide image</label>
+      <span>Mode: <strong id="mode-label">—</strong></span>
+      <span>Transform: <strong id="transform-label">—</strong></span>
+    </div>
+    <p class="note" id="image-tuning-note" hidden></p>
+
+    <p class="err" id="error" hidden></p>
+    <p class="note" id="short-note" hidden></p>
+
+    <section id="query-section" hidden>
+      <div class="card" id="query-card"></div>
+      <div id="status-strip"></div>
+    </section>
+
+    <section id="weights-section" class="panel" hidden>
+      <h2 style="font-size:1rem;margin:0 0 0.5rem;">Fusion weights (client re-rank)</h2>
+      <p class="note" id="topn-note">Products outside the fetched top N cannot enter the ranking.</p>
+      <div class="weights" id="weight-sliders"></div>
+      <div class="controls" id="preset-row">
+        <button type="button" id="preset-shipped" data-label="Shipped">Shipped</button>
+        <button type="button" id="preset-text" data-label="Text only (minilm_only)">Text only</button>
+        <button type="button" id="preset-noimage" data-label="No image">No image</button>
+        <button type="button" id="preset-structured" data-label="Structured only">Structured only</button>
+      </div>
+    </section>
+
+    <section id="results-section" hidden>
+      <h2 style="font-size:1rem;margin:0 0 0.25rem;">Similar products</h2>
+      <p id="match-note" class="note"></p>
+      <div class="grid" id="results-grid"></div>
+    </section>
+
+    <section id="compare-panel" class="panel" hidden>
+      <h2 style="font-size:1rem;margin:0 0 0.5rem;">Compare query vs result</h2>
+      <table class="compare-table" id="compare-table"></table>
+    </section>
+
+    <details class="panel" id="evidence-panel">
+      <summary>Evaluation evidence (from docs/eval.json)</summary>
+      <div id="evidence-body"></div>
+    </details>
+  </div>
+
+  <div class="drawer" id="explain-drawer" aria-hidden="true" role="dialog" aria-labelledby="drawer-title">
+    <div class="drawer-inner">
+      <button type="button" id="drawer-close" style="float:right">Close</button>
+      <h2 id="drawer-title" style="font-size:1rem;margin:0 0 0.35rem;"></h2>
+      <p class="meta" id="drawer-score"></p>
+      <div id="drawer-bars"></div>
+      <p class="meta" id="drawer-math"></p>
+      <button type="button" id="btn-copy-curl">Copy curl</button>
+      <pre class="raw-json" id="raw-json"></pre>
+    </div>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

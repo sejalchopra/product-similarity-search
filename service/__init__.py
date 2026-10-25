@@ -1,0 +1,1 @@
+"""Product similarity service package."""
