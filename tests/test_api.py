@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 import pytest
 from fastapi.testclient import TestClient
@@ -125,7 +126,31 @@ def test_demo_index(client: TestClient) -> None:
     r = client.get("/")
     assert r.status_code == 200
     assert "text/html" in r.headers.get("content-type", "")
-    assert "Product Similarity Demo" in r.text
+    body = r.text
+    assert "Product Similarity Demo" in body
+    assert 'id="evidence-panel"' in body
+    assert "How to read this page" in body
+    assert 'value="50" selected' in body
+
+
+def test_eval_keys_the_demo_reads(client: TestClient) -> None:
+    path = Path(__file__).resolve().parents[1] / "docs" / "eval.json"
+    if not path.is_file():
+        pytest.skip("eval.json missing")
+    r = client.get("/eval")
+    assert r.status_code == 200
+    data = r.json()
+    assert "ndcg10" in data["test_results"]["fusion"]
+    assert "lo" in data["test_results"]["fusion"]["ndcg10"]
+    assert "minilm_only" in data["test_results"]["baselines"]
+    assert "ndcg10" in data["test_results"]["baselines"]["minilm_only"]
+    assert "test" in data["paired_ndcg_fusion_minus_minilm"]
+    assert "lo" in data["paired_ndcg_fusion_minus_minilm"]["test"]
+    assert "hi" in data["paired_ndcg_fusion_minus_minilm"]["test"]
+    assert "accepted_tuned" in data["guardrails"]
+    assert isinstance(data["split"], dict)
+    assert "tune_queries" in data["split"]
+    assert "image_coverage" in data
 
 
 def test_meta_includes_currency_symbol(client: TestClient) -> None:

@@ -6,7 +6,7 @@ from typing import Any
 
 import numpy as np
 
-from scripts.eval_bootstrap import paired_bootstrap_ci
+from scripts.eval.bootstrap import paired_bootstrap_ci
 
 SIMPLICITY = {"binary": 0, "A": 1, "B": 1, "A+B": 2}
 DEFAULT_TRANSFORM = "tail_log"

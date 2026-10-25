@@ -7,8 +7,8 @@ from typing import Any
 
 import numpy as np
 
-from scripts.eval_pooled import PooledQueryStore, top10_groups_on_pool
-from scripts.eval_progress import log as progress_log
+from scripts.eval.pooled import PooledQueryStore, top10_groups_on_pool
+from scripts.eval.progress import log as progress_log
 from service.catalog import Catalog
 from service.scoring import BLOCK_NAMES, DEFAULT_WEIGHTS, FusionWeights
 from service.scoring_profile import ScoringProfile

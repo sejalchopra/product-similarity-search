@@ -7,8 +7,8 @@ from typing import Any
 
 import numpy as np
 
-from scripts.eval_pool import eval_candidate_pool, relevant_groups_in_pool
-from scripts.eval_progress import StageTimer
+from scripts.eval.pool import eval_candidate_pool, relevant_groups_in_pool
+from scripts.eval.progress import StageTimer
 from service.catalog import Catalog
 from service.scoring import DEFAULT_WEIGHTS, FusionWeights, fuse_scores, rank_with_dedup
 from service.scoring_profile import ScoringProfile
@@ -129,7 +129,7 @@ class PooledQueryStore:
         ndcg_fn: Any,
         hit_fn: Any,
     ) -> tuple[float, float, np.ndarray, np.ndarray]:
-        from scripts.eval_tune import hit_at_k, ndcg_at_k
+        from scripts.eval.tune import hit_at_k, ndcg_at_k
 
         ndcgs: list[float] = []
         hits: list[float] = []

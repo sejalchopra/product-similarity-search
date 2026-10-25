@@ -86,7 +86,7 @@ Pydantic `Field` with descriptions and examples. JSON array of strings; **may be
 
 ## Directory structure (no extra dirs)
 
-- [`app.py`](app.py), [`service/cleaning.py`](service/cleaning.py), [`service/scoring.py`](service/scoring.py), [`service/catalog.py`](service/catalog.py), [`service/index.py`](service/index.py), [`service/cache.py`](service/cache.py), [`service/api.py`](service/api.py), [`service/config.py`](service/config.py)
+- [`app.py`](app.py), [`service/cleaning.py`](service/cleaning.py), [`service/scoring.py`](service/scoring.py), [`service/catalog.py`](service/catalog.py), [`service/index.py`](service/index.py), [`service/api.py`](service/api.py), [`service/config.py`](service/config.py)
 - [`scripts/build_index.py`](scripts/build_index.py), [`scripts/evaluate.py`](scripts/evaluate.py), [`scripts/bench_hnsw.py`](scripts/bench_hnsw.py)
 - [`tests/`](tests/), [`docs/DESIGN.md`](docs/DESIGN.md), [`docs/eval.json`](docs/eval.json)
 - [`k8s.yaml`](k8s.yaml), Makefile, requirements files, `pyproject.toml`, Dockerfile, `.dockerignore`, `.github/workflows/test.yml`

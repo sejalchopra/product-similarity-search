@@ -105,6 +105,15 @@ button.primary { background: var(--accent); color: #fff; border-color: transpare
 .card h2 { margin: 0 0 0.35rem; font-size: 1.1rem; }
 .meta { color: var(--muted); font-size: 0.9rem; }
 .controls { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; margin-bottom: 1rem; font-size: 0.9rem; }
+#topn-hint { display: block; margin-top: 0.2rem; }
+summary { cursor: pointer; }
+summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.how-to { margin: 0.5rem 0 0; padding-left: 1.2rem; }
+.how-to li { margin: 0.2rem 0; }
+.kv { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin: 0.35rem 0 0.75rem; }
+.kv th, .kv td { border: 1px solid var(--border); padding: 0.3rem 0.45rem; text-align: left; vertical-align: top; }
+.kv th { font-weight: 600; width: 48%; }
+.section-label { font-size: 0.9rem; margin: 0.6rem 0 0.2rem; }
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
@@ -129,6 +138,12 @@ button.primary { background: var(--accent); color: #fff; border-color: transpare
   background: var(--bar-bg);
 }
 .result .name { font-size: 0.85rem; margin: 0.35rem 0 0; font-weight: 600; }
+.compare-btn {
+  display: block;
+  margin-top: 0.4rem;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
 .chip {
   display: inline-block;
   font-size: 0.7rem;
@@ -137,6 +152,12 @@ button.primary { background: var(--accent); color: #fff; border-color: transpare
   border-radius: 4px;
   background: var(--bar-bg);
   color: var(--fg);
+}
+.chip.imputed {
+  color: var(--muted);
+  background: transparent;
+  border: 1px dashed var(--border);
+  font-weight: 400;
 }
 .panel {
   margin-top: 1rem;
@@ -213,5 +234,9 @@ button.primary { background: var(--accent); color: #fff; border-color: transpare
 footer.status { border-top: 1px solid var(--border); padding-top: 0.75rem; }
 .weights label { display: block; font-size: 0.85rem; margin: 0.35rem 0; }
 .compare-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-.compare-table th, .compare-table td { border: 1px solid var(--border); padding: 0.35rem 0.5rem; }
+.compare-table th, .compare-table td {
+  border: 1px solid var(--border);
+  padding: 0.35rem 0.5rem;
+  word-break: break-word;
+}
 pre.raw-json { font-size: 0.75rem; overflow: auto; max-height: 200px; background: var(--bar-bg); padding: 0.5rem; }

@@ -14,6 +14,7 @@ from scipy import sparse
 
 from service.block_batch import BlockBatch, compute_block_batch
 from service.cleaning import assign_title_groups, normalize_title_for_group
+from service.index import build_hnsw_index
 from service.query_overrides import QueryOverrides
 from service.scoring import FusionWeights, fuse_scores
 from service.scoring_profile import ScoringProfile
@@ -273,16 +274,7 @@ def load_catalog(artifacts_dir: Path, build_hnsw: bool = False) -> Catalog:
     category_freq = np.array(manifest["category_freq"], dtype=np.float64)
     audience_freq = np.array(manifest["audience_freq"], dtype=np.float64)
 
-    hnsw_index = None
-    if build_hnsw:
-        import faiss
-
-        d = text.shape[1]
-        index = faiss.IndexHNSWFlat(d, 16)
-        index.hnsw.efConstruction = 200
-        index.hnsw.efSearch = 64
-        index.add(text.astype(np.float32))
-        hnsw_index = index
+    hnsw_index = build_hnsw_index(text.astype(np.float32)) if build_hnsw else None
 
     def _str_col(name: str) -> list[str]:
         return ["" if v is None else str(v) for v in meta[name].to_list()]

@@ -154,7 +154,7 @@ See [README.md](../README.md) for the **Monte Carlo tracksuit** walkthrough (`ad
   - Compares transforms **raw / percentile / tail_log** on held-out test with **cluster bootstrap** CIs.
   - Runs variants **binary, A, B, A+B** with per-variant tuning and metrics: NDCG@10, hit@10, same-child share, same-family share.
   - **Selection rule**: pick tune NDCG winner only if test CI for NDCG vs simpler rival **excludes 0**; else keep simpler variant.
-  - Writes **`docs/eval.json`**, **`artifacts/tuned_weights.json`**, **`cases.blazze`** top-10 table, calls **`scripts/design_render.py`** to refresh DESIGN between `<!-- eval:start -->` / `<!-- eval:end -->`.
+  - Writes **`docs/eval.json`**, **`artifacts/tuned_weights.json`**, **`cases.blazze`** top-10 table, calls **`scripts/eval/render_design.py`** to refresh DESIGN between `<!-- eval:start -->` / `<!-- eval:end -->`.
 
 - **`scripts/eval_tune.py`** — coordinate ascent, cluster bootstrap (resample **title groups**, not individual queries).
 

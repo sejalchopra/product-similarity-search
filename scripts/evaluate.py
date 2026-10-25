@@ -16,33 +16,33 @@ from typing import Any
 
 import numpy as np
 
-from scripts.design_render import render_design
-from scripts.eval_bootstrap import N_BOOT_DEFAULT, cluster_bootstrap_ci, paired_bootstrap_ci
-from scripts.eval_checkpoint import CACHE_DIR, config_hash, load_stage, save_stage
-from scripts.eval_fidelity import audit_pool_fidelity
-from scripts.eval_guardrails import guardrail_query_arrays, guardrails_pass, mean_guardrails
-from scripts.eval_pooled import (
+from scripts.eval.bootstrap import N_BOOT_DEFAULT, cluster_bootstrap_ci, paired_bootstrap_ci
+from scripts.eval.checkpoint import CACHE_DIR, config_hash, load_stage, save_stage
+from scripts.eval.fidelity import audit_pool_fidelity
+from scripts.eval.guardrails import guardrail_query_arrays, guardrails_pass, mean_guardrails
+from scripts.eval.pooled import (
     PooledQueryStore,
     profile_key,
     top10_groups_exact_on_pool,
     top10_groups_on_pool,
 )
-from scripts.eval_progress import StageTimer, print_runtime_table
-from scripts.eval_progress import log as progress_log
-from scripts.eval_progress import start as progress_start
-from scripts.eval_reports import (
+from scripts.eval.progress import StageTimer, print_runtime_table
+from scripts.eval.progress import log as progress_log
+from scripts.eval.progress import start as progress_start
+from scripts.eval.render_design import render_design
+from scripts.eval.render_state import render_current_state_markers
+from scripts.eval.reports import (
     blazze_comparison_table,
     top_title_groups,
 )
-from scripts.eval_selection import select_transform_on_validation, select_variant_on_validation
-from scripts.eval_tune import (
+from scripts.eval.selection import select_transform_on_validation, select_variant_on_validation
+from scripts.eval.tune import (
     hit_at_k,
     mean_metrics_on_rows,
     ndcg_at_k,
     tune_weights_hybrid,
     weights_unchanged_reason,
 )
-from scripts.state_render import render_current_state_markers
 from service.block_batch import compute_block_batch
 from service.catalog import Catalog, load_catalog
 from service.cleaning import dedup_merge_stats, normalize_title_for_group
@@ -307,7 +307,7 @@ def _run_microbenchmark(
         record=False,
     )
     build_sec = time.perf_counter() - t0
-    from scripts.eval_tune import TuneRunner
+    from scripts.eval.tune import TuneRunner
 
     runner = TuneRunner(catalog, store, sample, relevants, TextImageTransform.TAIL_LOG, 1.0, True)
     t1 = time.perf_counter()

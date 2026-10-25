@@ -71,24 +71,24 @@
   function topChips(blocks) {
     const items = BLOCK_ORDER.map((name) => ({
       name,
-      c: blocks[name].contribution,
-      v: blocks[name].value,
-      imp: blocks[name].imputed,
-    }));
+      c: blocks[name] ? blocks[name].contribution : 0,
+      v: blocks[name] ? blocks[name].value : 0,
+      imp: blocks[name] ? blocks[name].imputed : false,
+    })).filter((it) => blocks[it.name]);
     items.sort((a, b) => b.c - a.c);
     const chips = [];
     for (const it of items) {
       if (chips.length >= 3) break;
       if (it.c <= 0) continue;
-      if (it.name === "category" && it.v >= 0.99 && !it.imp) {
-        chips.push("same category");
-      } else if (it.name === "audience" && it.v >= 0.99 && !it.imp) {
-        chips.push("audience match");
-      } else if (it.imp) {
-        chips.push(it.name + " imputed");
+      if (it.imp) {
+        chips.push({ text: it.name + " imputed", imputed: true });
+      } else if (it.name === "category" && it.v >= 0.99) {
+        chips.push({ text: "same category", imputed: false });
+      } else if (it.name === "audience" && it.v >= 0.99) {
+        chips.push({ text: "audience match", imputed: false });
       } else {
         const label = it.name === "text" ? "title" : it.name;
-        chips.push(label + " " + it.v.toFixed(2));
+        chips.push({ text: label + " " + it.v.toFixed(2), imputed: false });
       }
     }
     return chips;
@@ -120,16 +120,14 @@
     strip.replaceChildren();
     const line = document.createElement("p");
     line.className = "status";
+    const ms = typeof meta.latency_ms === "number" ? Math.round(meta.latency_ms) + " ms" : "—";
+    const cached = meta.cache_hit === true ? " (cached)" : "";
     line.textContent =
       "Scored " + meta.candidates_scored + " products · " +
       meta.title_groups_total + " title groups · " +
       meta.hidden_query_group_count + " colorway variants of this product hidden · " +
-      Math.round(meta.latency_ms) + " ms · " + meta.mode + " mode · " + meta.transform;
+      ms + cached + " · " + meta.mode + " mode · " + meta.transform;
     strip.appendChild(line);
-    const exact = document.createElement("p");
-    exact.className = "status ok";
-    exact.textContent = "Explore always uses exact scoring.";
-    strip.appendChild(exact);
     if (meta.hidden_query_group_ids && meta.hidden_query_group_ids.length) {
       const det = document.createElement("details");
       const sum = document.createElement("summary");
@@ -200,9 +198,10 @@
     }
     grid.replaceChildren();
     results.forEach((card, i) => {
-      const btn = document.createElement("button");
-      btn.type = "button";
+      const btn = document.createElement("div");
       btn.className = "result";
+      btn.setAttribute("role", "button");
+      btn.tabIndex = 0;
       btn.dataset.id = card.id;
       const rankEl = document.createElement("div");
       rankEl.className = "rank";
@@ -221,18 +220,26 @@
       btn.appendChild(sub);
       topChips(card.blocks).forEach((t) => {
         const chip = document.createElement("span");
-        chip.className = "chip";
-        chip.textContent = t;
+        chip.className = t.imputed ? "chip imputed" : "chip";
+        chip.textContent = t.text;
         btn.appendChild(chip);
       });
       btn.addEventListener("click", () => openDrawer(card));
+      btn.addEventListener("keydown", (ev) => {
+        if (ev.key === "Enter" || ev.key === " ") {
+          ev.preventDefault();
+          openDrawer(card);
+        }
+      });
       const cmp = document.createElement("button");
       cmp.type = "button";
+      cmp.className = "compare-btn";
       cmp.textContent = "Compare";
       cmp.addEventListener("click", (ev) => {
         ev.stopPropagation();
         selectedResult = card;
         renderCompare();
+        el("compare-panel").scrollIntoView({ behavior: "smooth", block: "start" });
       });
       btn.appendChild(cmp);
       grid.appendChild(btn);
@@ -250,7 +257,7 @@
     el("results-section").hidden = results.length === 0;
     const note = el("match-note");
     if (weightsMatchServer()) {
-      note.textContent = "matches server ranking";
+      note.textContent = "✓ matches server ranking";
       note.className = "ok";
     } else {
       note.textContent = "Custom weights — only top-" + results.length + " can reorder";
@@ -317,23 +324,62 @@
     syncHash();
   }
 
-  function presetNdgcLabel(key) {
-    if (!evalData) return "";
-    if (key === "shipped" && evalData.shipped_transform && evalData.transform_experiment) {
-      const row = evalData.transform_experiment[evalData.shipped_transform];
-      if (row && row.ndcg10) {
-        return " NDCG@10 " + row.ndcg10.mean.toFixed(3) +
-          " [" + row.ndcg10.lo.toFixed(3) + "," + row.ndcg10.hi.toFixed(3) + "]";
-      }
+  const MISSING = "not in eval.json";
+  const CATEGORICAL = { brand: true, category: true, audience: true };
+
+  function dig(obj, path) {
+    let cur = obj;
+    for (let i = 0; i < path.length; i++) {
+      if (cur == null || typeof cur !== "object" || !(path[i] in cur)) return undefined;
+      cur = cur[path[i]];
     }
-    if (key === "text" && evalData.baselines && evalData.baselines.minilm_only) {
-      const row = evalData.baselines.minilm_only.ndcg10;
-      if (row) {
-        return " NDCG@10 " + row.mean.toFixed(3) +
-          " [" + row.lo.toFixed(3) + "," + row.hi.toFixed(3) + "]";
-      }
+    return cur;
+  }
+
+  function fmtCi(ci) {
+    if (!ci || typeof ci.mean !== "number" || typeof ci.lo !== "number" || typeof ci.hi !== "number") {
+      return null;
     }
-    return "";
+    return ci.mean.toFixed(3) + " [" + ci.lo.toFixed(3) + ", " + ci.hi.toFixed(3) + "]";
+  }
+
+  function ciZeroSentence(ci) {
+    if (!ci || typeof ci.lo !== "number" || typeof ci.hi !== "number") return MISSING;
+    return (ci.lo > 0 || ci.hi < 0) ? "CI excludes 0" : "CI includes 0";
+  }
+
+  function fmtPaired(ci) {
+    const base = fmtCi(ci);
+    if (!base) return MISSING;
+    return base + " · " + ciZeroSentence(ci);
+  }
+
+  function fmt3(v) {
+    return typeof v === "number" ? v.toFixed(3) : MISSING;
+  }
+
+  function presetMetric(ci) {
+    const formatted = fmtCi(ci);
+    return formatted ? " " + formatted : " " + MISSING;
+  }
+
+  function applyPresetLabels() {
+    const shipped = el("preset-shipped");
+    const text = el("preset-text");
+    if (shipped) {
+      const ci = dig(evalData, ["test_results", "fusion", "ndcg10"]);
+      shipped.textContent = shipped.dataset.label + (evalData ? presetMetric(ci) : "");
+    }
+    if (text) {
+      const ci = dig(evalData, ["test_results", "baselines", "minilm_only", "ndcg10"]);
+      text.textContent = text.dataset.label + (evalData ? presetMetric(ci) : "");
+    }
+    ["noimage", "structured"].forEach((key) => {
+      const btn = el("preset-" + key);
+      if (!btn) return;
+      btn.textContent = btn.dataset.label;
+      btn.title = "not evaluated";
+    });
   }
 
   function openDrawer(card) {
@@ -395,6 +441,34 @@
     el("explain-drawer").setAttribute("aria-hidden", "true");
   }
 
+  function sideText(block, card, sym) {
+    if (block === "text") return card.name || "—";
+    if (block === "image") return card.image_url ? "present" : "missing";
+    if (block === "category") return card.child_category || "—";
+    if (block === "audience") return card.audience || "—";
+    if (block === "brand") return card.brand || "—";
+    if (block === "color") return card.color_missing ? "missing" : "present";
+    if (block === "price") return formatPrice(card.price, sym);
+    if (block === "rating") return card.rating == null ? "—" : String(card.rating);
+    if (block === "weight") return card.weight_g == null ? "—" : String(card.weight_g);
+    return "—";
+  }
+
+  function blockReading(name, block) {
+    if (!block || typeof block.value !== "number") return "—";
+    const v = block.value;
+    if (CATEGORICAL[name]) {
+      if (block.imputed) return "imputed";
+      if (name === "audience" && Math.abs(v - 0.5) < 1e-6) return "partial";
+      if (v >= 0.99) return "match";
+      return "mismatch";
+    }
+    if (block.imputed) return v.toFixed(3) + " · imputed";
+    if (v >= 0.8) return v.toFixed(3) + " · similar";
+    if (v >= 0.5) return v.toFixed(3) + " · somewhat";
+    return v.toFixed(3) + " · different";
+  }
+
   function renderCompare() {
     const panel = el("compare-panel");
     if (!exploreData || !selectedResult) {
@@ -404,84 +478,194 @@
     panel.hidden = false;
     const q = exploreData.query;
     const r = selectedResult;
-    const rows = [
-      ["brand", q.brand, r.brand],
-      ["category", q.child_category, r.child_category],
-      ["audience", q.audience, r.audience],
-      ["price", q.price, r.price],
-      ["rating", q.rating, r.rating],
-      ["weight", q.weight_g, r.weight_g],
-      ["image", q.image_url ? "present" : "missing", r.image_url ? "present" : "missing"],
-      ["color", q.color_missing ? "missing" : "present", r.color_missing ? "missing" : "present"],
-    ];
+    const sym = exploreData.meta ? exploreData.meta.currency_symbol : "";
     const table = el("compare-table");
     table.replaceChildren();
     const head = document.createElement("tr");
-    ["Field", "Query", "Result", ""].forEach((h) => {
+    ["Block", "Query", "Result", "Value", "Reading"].forEach((h) => {
       const th = document.createElement("th");
+      th.scope = "col";
       th.textContent = h;
       head.appendChild(th);
     });
     table.appendChild(head);
-    rows.forEach((row) => {
+    BLOCK_ORDER.forEach((name) => {
+      const block = r.blocks ? r.blocks[name] : null;
       const tr = document.createElement("tr");
-      [row[0], String(row[1] ?? "—"), String(row[2] ?? "—")].forEach((cell) => {
-        const td = document.createElement("td");
-        td.textContent = cell;
-        tr.appendChild(td);
+      const cells = [
+        name,
+        sideText(name, q, sym),
+        sideText(name, r, sym),
+        block && typeof block.value === "number" ? block.value.toFixed(3) : "—",
+        blockReading(name, block),
+      ];
+      cells.forEach((text, i) => {
+        const cell = document.createElement(i === 0 ? "th" : "td");
+        if (i === 0) cell.scope = "row";
+        cell.textContent = text;
+        tr.appendChild(cell);
       });
-      const mark = document.createElement("td");
-      const a = row[1];
-      const b = row[2];
-      if (a == null && b == null) mark.textContent = "—";
-      else if (a === b) mark.textContent = "match";
-      else if (a == null || b == null) mark.textContent = "missing";
-      else mark.textContent = "mismatch";
-      tr.appendChild(mark);
       table.appendChild(tr);
     });
   }
 
-  function evalRunLabel(data) {
-    const split = data.split || {};
-    const used =
-      "tune " + (data.tune_queries ?? "—") + " / " + (split.tune_queries_full ?? "—") +
-      ", val " + (data.validation_queries ?? "—") + " / " + (split.validation_queries_full ?? "—") +
-      ", test " + (data.test_queries ?? "—") + " / " + (split.test_queries_full ?? "—");
-    if (data.smoke) return "smoke (capped) · " + used;
-    if (data.capped) return "capped (not smoke) · " + used;
-    return "full eval · " + used;
+  function countText(used, full) {
+    const u = typeof used === "number" ? String(used) : MISSING;
+    const f = typeof full === "number" ? String(full) : MISSING;
+    return u + " / " + f;
+  }
+
+  function runLabel(data) {
+    if (data.smoke === true) return "smoke";
+    if (data.capped === true) return "capped run (not smoke)";
+    if (data.smoke == null && data.capped == null) return MISSING;
+    return "full eval";
+  }
+
+  function coverageText(data) {
+    if (typeof data.image_coverage !== "number") return MISSING;
+    return (data.image_coverage * 100).toFixed(1) + "%";
+  }
+
+  function addKvRow(table, label, value) {
+    const tr = document.createElement("tr");
+    const th = document.createElement("th");
+    th.scope = "row";
+    th.textContent = label;
+    const td = document.createElement("td");
+    td.textContent = value;
+    tr.appendChild(th);
+    tr.appendChild(td);
+    table.appendChild(tr);
+  }
+
+  function makeKvTable() {
+    const table = document.createElement("table");
+    table.className = "kv";
+    return table;
+  }
+
+  function renderEvidenceMissing() {
+    const host = el("evidence-body");
+    host.replaceChildren();
+    const p = document.createElement("p");
+    p.textContent = "evaluation file not found";
+    host.appendChild(p);
   }
 
   function renderEvidence() {
     const host = el("evidence-body");
     host.replaceChildren();
     if (!evalData) {
-      host.textContent = "Load /eval failed or eval.json missing.";
+      renderEvidenceMissing();
       return;
     }
-    const p = document.createElement("p");
-    p.textContent =
-      "from GET /eval · " + evalRunLabel(evalData) +
-      " · image coverage " + evalData.image_coverage;
-    host.appendChild(p);
-    const test = evalData.test_results || {};
-    const baselines = test.baselines || evalData.baselines || {};
-    if (baselines) {
-      Object.keys(baselines).forEach((name) => {
-        const b = baselines[name];
-        if (!b || !b.ndcg10) return;
-        const line = document.createElement("p");
-        line.textContent = name + " NDCG@10 " + b.ndcg10.mean.toFixed(3) +
-          " [" + b.ndcg10.lo.toFixed(3) + "," + b.ndcg10.hi.toFixed(3) + "]";
-        host.appendChild(line);
+    const data = evalData;
+    const split = data.split && typeof data.split === "object" ? data.split : null;
+    const head = document.createElement("p");
+    const tuneUsed = split ? split.tune_queries : data.tune_queries;
+    const valUsed = split ? split.validation_queries : data.validation_queries;
+    const testUsed = split ? split.test_queries : data.test_queries;
+    const tuneFull = split ? split.tune_queries_full : undefined;
+    const valFull = split ? split.validation_queries_full : undefined;
+    const testFull = split ? split.test_queries_full : undefined;
+    head.textContent =
+      runLabel(data) +
+      " · tune " + countText(tuneUsed, tuneFull) +
+      ", val " + countText(valUsed, valFull) +
+      ", test " + countText(testUsed, testFull) +
+      " · image coverage " + coverageText(data);
+    host.appendChild(head);
+
+    const metrics = makeKvTable();
+    const fusion = dig(data, ["test_results", "fusion"]);
+    addKvRow(metrics, "Shipped fusion NDCG@10", fmtCi(fusion && fusion.ndcg10) || MISSING);
+    addKvRow(metrics, "Shipped fusion hit@10", fmtCi(fusion && fusion.hit10) || MISSING);
+    const mini = dig(data, ["test_results", "baselines", "minilm_only"]);
+    const pop = dig(data, ["test_results", "baselines", "popularity"]);
+    addKvRow(metrics, "MiniLM-only (text only) NDCG@10", fmtCi(mini && mini.ndcg10) || MISSING);
+    addKvRow(metrics, "MiniLM-only (text only) hit@10", fmtCi(mini && mini.hit10) || MISSING);
+    addKvRow(metrics, "Popularity NDCG@10", fmtCi(pop && pop.ndcg10) || MISSING);
+    addKvRow(metrics, "Popularity hit@10", fmtCi(pop && pop.hit10) || MISSING);
+    addKvRow(
+      metrics,
+      "Fusion − MiniLM, validation",
+      fmtPaired(dig(data, ["paired_ndcg_fusion_minus_minilm", "validation"]))
+    );
+    addKvRow(
+      metrics,
+      "Fusion − MiniLM, test",
+      fmtPaired(dig(data, ["paired_ndcg_fusion_minus_minilm", "test"]))
+    );
+    const shippedName = typeof data.shipped_transform === "string" ? data.shipped_transform : MISSING;
+    addKvRow(
+      metrics,
+      "raw − " + shippedName,
+      fmtPaired(dig(data, ["transform_selection_meta", "paired_vs_default", "raw"]))
+    );
+    addKvRow(
+      metrics,
+      "percentile − " + shippedName,
+      fmtPaired(dig(data, ["transform_selection_meta", "paired_vs_default", "percentile"]))
+    );
+    const guards = dig(data, ["guardrails"]);
+    let tuning = MISSING;
+    if (guards && typeof guards === "object" && "accepted_tuned" in guards) {
+      tuning = guards.accepted_tuned ? "accepted" : "rejected";
+      if (!guards.accepted_tuned) {
+        tuning += " · " + (typeof guards.rejection_reason === "string" && guards.rejection_reason
+          ? guards.rejection_reason
+          : MISSING);
+      }
+    }
+    addKvRow(metrics, "Weight tuning", tuning);
+    addKvRow(
+      metrics,
+      "Same-child share, default",
+      fmt3(dig(data, ["guardrails", "validation_default", "same_child_share10"]))
+    );
+    addKvRow(
+      metrics,
+      "Same-child share, tuned candidate",
+      fmt3(dig(data, ["guardrails", "validation_tuned_candidate", "same_child_share10"]))
+    );
+    addKvRow(
+      metrics,
+      "Variant A − binary, same-child (test)",
+      fmtPaired(dig(data, [
+        "variant_guardrails_binary_vs_A", "test", "same_child_share10", "paired_A_minus_binary"
+      ]))
+    );
+    host.appendChild(metrics);
+
+    const pairHead = document.createElement("p");
+    pairHead.className = "section-label";
+    pairHead.textContent = "Pair-active rates";
+    host.appendChild(pairHead);
+    const rates = data.pair_active_rates;
+    const pairTable = makeKvTable();
+    const headRow = document.createElement("tr");
+    ["Block", "Share of random pairs where both have the attribute"].forEach((label) => {
+      const th = document.createElement("th");
+      th.scope = "col";
+      th.textContent = label;
+      headRow.appendChild(th);
+    });
+    pairTable.appendChild(headRow);
+    if (!rates || typeof rates !== "object") {
+      addKvRow(pairTable, MISSING, MISSING);
+    } else {
+      const names = Object.keys(rates);
+      const ordered = BLOCK_ORDER.filter((name) => names.indexOf(name) >= 0)
+        .concat(names.filter((name) => BLOCK_ORDER.indexOf(name) < 0));
+      if (!ordered.length) addKvRow(pairTable, MISSING, MISSING);
+      ordered.forEach((name) => {
+        const rate = rates[name];
+        const shown = typeof rate === "number" ? (rate * 100).toFixed(1) + "%" : MISSING;
+        addKvRow(pairTable, name, shown);
       });
     }
-    if (evalData.pair_active_rates) {
-      const pr = document.createElement("p");
-      pr.textContent = "Pair-active: " + JSON.stringify(evalData.pair_active_rates);
-      host.appendChild(pr);
-    }
+    host.appendChild(pairTable);
   }
 
   function syncHash() {
@@ -582,12 +766,11 @@
     try {
       evalData = await fetchJson("/eval");
       renderEvidence();
-      ["shipped", "text", "noimage", "structured"].forEach((key) => {
-        const btn = el("preset-" + key);
-        if (btn) btn.textContent = btn.dataset.label + presetNdgcLabel(key === "shipped" ? "shipped" : key === "text" ? "text" : "");
-      });
+      applyPresetLabels();
     } catch (_) {
       evalData = null;
+      renderEvidenceMissing();
+      applyPresetLabels();
     }
   }
 

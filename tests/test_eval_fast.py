@@ -5,9 +5,9 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from scripts.eval_bootstrap import cluster_bootstrap_ci, paired_bootstrap_ci
-from scripts.eval_pooled import top10_groups_exact_on_pool, top10_groups_on_pool
-from scripts.eval_selection import select_variant_on_validation
+from scripts.eval.bootstrap import cluster_bootstrap_ci, paired_bootstrap_ci
+from scripts.eval.pooled import top10_groups_exact_on_pool, top10_groups_on_pool
+from scripts.eval.selection import select_variant_on_validation
 from service.scoring import DEFAULT_WEIGHTS, FusionWeights
 from service.scoring_profile import ScoringProfile
 

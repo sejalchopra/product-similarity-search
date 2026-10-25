@@ -6,7 +6,7 @@ import random
 
 import numpy as np
 
-from scripts.eval_pooled import top10_groups_exact_on_pool, top10_groups_on_pool
+from scripts.eval.pooled import top10_groups_exact_on_pool, top10_groups_on_pool
 from service.catalog import Catalog
 from service.config import Settings
 from service.scoring import FusionWeights, fuse_scores

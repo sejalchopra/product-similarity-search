@@ -58,21 +58,6 @@ class ExplainResponse(BaseModel):
     blocks: dict[str, ExplainBlock]
 
 
-class SimilarQuery(BaseModel):
-    product_id: str = Field(
-        ...,
-        description="Catalog uniq_id",
-        examples=["26d41bdc1495de290bc8e6062d927729"],
-    )
-    num_similar: int = Field(
-        ...,
-        ge=1,
-        le=50,
-        description="Number of similar products to return (may return fewer after dedup)",
-        examples=[5],
-    )
-
-
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     settings = load_settings()

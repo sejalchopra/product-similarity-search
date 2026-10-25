@@ -25,10 +25,11 @@
       <label>Top N
         <select id="num-similar">
           <option value="20">20</option>
-          <option value="50">50</option>
-          <option value="100" selected>100</option>
+          <option value="50" selected>50</option>
+          <option value="100">100</option>
           <option value="200">200</option>
         </select>
+        <span class="note" id="topn-hint">Low ranks are weaker matches; scores flatten after rank 50.</span>
       </label>
       <label><input type="checkbox" id="mask-brand" /> Hide brand</label>
       <label><input type="checkbox" id="mask-image" /> Hide image</label>
@@ -36,6 +37,17 @@
       <span>Transform: <strong id="transform-label">—</strong></span>
     </div>
     <p class="note" id="image-tuning-note" hidden></p>
+
+    <details class="panel" id="how-to-read">
+      <summary>How to read this page</summary>
+      <ul class="how-to">
+        <li>The score is a weighted sum of nine block values.</li>
+        <li>Chips show the biggest contributors.</li>
+        <li>Hatched or "imputed" means the data was missing and a neutral value was used.</li>
+        <li>Sliders re-rank only the fetched top N.</li>
+        <li>The green check means the browser re-ranking equals the server ranking.</li>
+      </ul>
+    </details>
 
     <p class="err" id="error" hidden></p>
     <p class="note" id="short-note" hidden></p>
@@ -51,9 +63,9 @@
       <div class="weights" id="weight-sliders"></div>
       <div class="controls" id="preset-row">
         <button type="button" id="preset-shipped" data-label="Shipped">Shipped</button>
-        <button type="button" id="preset-text" data-label="Text only (minilm_only)">Text only</button>
-        <button type="button" id="preset-noimage" data-label="No image">No image</button>
-        <button type="button" id="preset-structured" data-label="Structured only">Structured only</button>
+        <button type="button" id="preset-text" data-label="Text only">Text only</button>
+        <button type="button" id="preset-noimage" data-label="No image" title="not evaluated">No image</button>
+        <button type="button" id="preset-structured" data-label="Structured only" title="not evaluated">Structured only</button>
       </div>
     </section>
 

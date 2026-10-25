@@ -15,7 +15,7 @@ select = ["E", "F", "I", "UP", "B"]
 
 [tool.ruff.lint.per-file-ignores]
 "service/transforms.py" = ["UP042"]
-"scripts/design_render.py" = ["E501"]
+"scripts/eval/render_design.py" = ["E501"]
 
 [tool.mypy]
 python_version = "3.12"

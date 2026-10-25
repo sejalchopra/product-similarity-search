@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import numpy as np
 
-from scripts.eval_guardrails import guardrails_pass
-from scripts.eval_tune import BLOCK_NAMES, _apply_weight_constraints
+from scripts.eval.guardrails import guardrails_pass
+from scripts.eval.tune import BLOCK_NAMES, _apply_weight_constraints
 from service.scoring import DEFAULT_WEIGHTS, FusionWeights
 
 

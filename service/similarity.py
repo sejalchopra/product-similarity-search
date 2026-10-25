@@ -3,11 +3,16 @@
 from __future__ import annotations
 
 import numpy as np
-from numpy.typing import NDArray
 
 from service.catalog import Catalog
 from service.config import Settings
-from service.scoring import BLOCK_NAMES, DEFAULT_WEIGHTS, FusionWeights, rank_with_dedup
+from service.scoring import (
+    BLOCK_NAMES,
+    DEFAULT_WEIGHTS,
+    FusionWeights,
+    fuse_scores,
+    rank_with_dedup,
+)
 from service.scoring_profile import ScoringProfile
 
 
@@ -88,9 +93,3 @@ def explain_one(
         "imputed": imputed,
         "transform": w.text_image_transform.value,
     }
-
-
-def fuse_scores(mat: NDArray[np.float64], weights: FusionWeights) -> NDArray[np.float64]:
-    from service.scoring import fuse_scores as _fuse
-
-    return _fuse(mat, weights)
