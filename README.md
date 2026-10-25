@@ -128,59 +128,72 @@ Ref: [Kaggle](https://www.kaggle.com/datasets/promptcloud/amazon-fashion-product
 
 ## Solution (hybrid similarity service)
 
-### Quick start
+This service answers “what else looks like this SKU?” with a **nine-block late-fusion scorer** over precomputed embeddings and calibrated tabular features. **`GET /find_similar_products`** uses the same fusion path as offline evaluation (exact catalog scan or optional capped ANN union). A **demo UI** at `/` calls **`/explore`** so scores decompose into per-block contributions. **Artifacts** (`embeddings`, `metadata.parquet`, `manifest.json`, tuned weights) ship in-repo and in the Docker image so runtime needs no dataset fetch. **Metrics** are produced only by the eval pipeline into `docs/eval*.json` (smoke, capped medium, or full)—see [docs/DESIGN.md](docs/DESIGN.md).
+
+### Run locally
 
 ```bash
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt -r requirements-dev.txt
-make index          # builds artifacts/ (use full index without --skip-images for CLIP)
-make eval-smoke     # fast capped run → docs/eval.smoke.json (gitignored)
-make eval-medium    # larger capped run → docs/eval.medium.json (gitignored); see logs/eval-medium.log
-make eval           # full uncapped run → docs/eval.json (promotes metrics to DESIGN.md)
-make run-local      # http://localhost:8000/docs
+make index          # first-time or after data change (reads data/*.ldjson)
+make run-local      # http://localhost:8000/ and http://localhost:8000/docs
 ```
 
-Endpoints: `GET /find_similar_products`, `GET /explain`, `GET /health`, `GET /ready`.
-
-Design and metrics: [docs/DESIGN.md](docs/DESIGN.md) (numbers from `docs/eval.json`).
-
-### Docker / Kubernetes
+### Docker
 
 ```bash
 make build
 docker run --rm -p 8000:8000 product-similarity:local
+```
+
+The image copies `service/`, `artifacts/`, and `docs/eval.json` only (no raw ldjson at runtime).
+
+### Kubernetes
+
+```bash
+make build
+kind load docker-image product-similarity:local    # kind / minikube: load image into cluster
 kubectl apply -f k8s.yaml
 ```
 
-Artifacts are baked into the image (`COPY artifacts/`). For kind/minikube: `kind load docker-image product-similarity:local`.
+Set `imagePullPolicy: IfNotPresent` in the manifest for local clusters.
 
-### ANN mode
+### HTTP API
 
-`SEARCH_MODE=ann` enables capped union retrieval (HNSW + brand/category lists). Pure 1M HNSW benchmark: `make bench` (set `SMOKE_BENCH=1` for a 5k smoke run).
-
-### Demo UI
-
-After `make run-local`, open [http://localhost:8000/](http://localhost:8000/). The page uses `GET /explore` (full-catalog exact scoring with the shipped fusion weights), not `/find_similar_products`, so every card score matches `sum(block contributions)` in the drawer.
-
-| Panel | What it proves |
+| Route | Role |
 | --- | --- |
-| Result chips + drawer bars | Per-block `contribution = weight × value` sums to the fused score; imputed blocks show reasons and hatched bars. |
-| Weight sliders | Client re-ranks only within the fetched top *N*; green **matches server ranking** when sliders equal `meta.weights`. |
-| Hide brand / Hide image | Refetches `/explore?mask=…` and shows real imputation without mutating the catalog. |
-| Evidence `<details>` | Numbers come from `GET /eval` → `docs/eval.json` (written by `make eval`), not hardcoded copy. |
-| Status strip | Live catalog stats (candidates scored, title groups, hidden colorway siblings). |
+| `GET /find_similar_products` | Required assignment endpoint (`product_id`, `num_similar`) |
+| `GET /explore` | Full-catalog fused ranking + score breakdown (demo UI) |
+| `GET /explain` | Per-candidate block contributions for a query pair |
+| `GET /eval` | Serves shipped `docs/eval.json` for the evidence panel |
+| `GET /meta` | Catalog / artifact metadata |
+| `GET /health`, `GET /ready` | Liveness and readiness |
+| `GET /docs` | OpenAPI (Swagger) |
+| `GET /` | Static demo UI |
 
-**Three-minute walkthrough:** Search **Monte Carlo Grey Solid Cotton Blend Polo Collar Tracksuit** (`ad8a5a196d515ef09dfdaf082bdc37c4`). Open a result drawer and confirm the math line. Drag the **text** slider — rank should move (image coverage in this catalog is 0, so “Hide image” is a no-op on rank). Toggle **Hide brand** — brand block imputes (this SKU already has no brand). In the status strip, open **Hidden variants** to see the black colorway sibling suppressed from results.
-
-API docs remain at `/docs`.
-
-Required endpoint examples:
+Required endpoint (real `uniq_id` values from the indexed catalog):
 
 ```bash
 curl -s 'http://localhost:8000/find_similar_products?product_id=26d41bdc1495de290bc8e6062d927729&num_similar=5'
-curl -s 'http://localhost:8000/find_similar_products?product_id=id00&num_similar=5'
+curl -s 'http://localhost:8000/find_similar_products?product_id=ad8a5a196d515ef09dfdaf082bdc37c4&num_similar=10'
 ```
 
-(Use a real `uniq_id` from your catalog when artifacts are loaded; `id00` works with the synthetic test catalog only.)
+### Make targets
+
+| Target | Purpose |
+| --- | --- |
+| `make index` | Build `artifacts/` from `data/*.ldjson` |
+| `make eval-smoke` | Capped smoke eval → `docs/eval.smoke.json` (gitignored) |
+| `make eval-medium` | Larger capped eval → `docs/eval.medium.json` (gitignored); log in `logs/eval-medium.log` |
+| `make eval` | Full uncapped eval → `docs/eval.json` and refreshes generated regions in `docs/DESIGN.md` |
+| `make bench` | Pure 1M-vector HNSW benchmark (`docs/bench_hnsw.json`; `SMOKE_BENCH=1` for a small run) |
+| `make lint` | Ruff + mypy |
+| `make test` | Pytest |
+
+Do not copy metric numbers into README or DESIGN by hand. Use **`docs/eval.json`** (full), **`docs/eval.smoke.json`** (smoke), or **`docs/eval.medium.json`** (capped medium); each report labels `smoke` / `capped` and split sizes in JSON.
+
+### Demo UI
+
+Open [http://localhost:8000/](http://localhost:8000/) after `make run-local`. The UI fetches `/explore` and `/eval`; evidence strings come from the eval JSON files above, not hardcoded copy.
 
 
