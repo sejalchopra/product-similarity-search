@@ -115,7 +115,7 @@
     el("query-section").hidden = false;
   }
 
-  async function renderStatus(meta) {
+  function renderStatus(meta) {
     const strip = el("status-strip");
     strip.replaceChildren();
     const line = document.createElement("p");
@@ -128,27 +128,6 @@
       meta.hidden_query_group_count + " colorway variants of this product hidden · " +
       ms + cached + " · " + meta.mode + " mode · " + meta.transform;
     strip.appendChild(line);
-    if (meta.hidden_query_group_ids && meta.hidden_query_group_ids.length) {
-      const det = document.createElement("details");
-      const sum = document.createElement("summary");
-      sum.textContent = "Hidden variants";
-      det.appendChild(sum);
-      const ul = document.createElement("ul");
-      let names = Object.create(null);
-      try {
-        const batch = await fetchJson(
-          "/products?ids=" + meta.hidden_query_group_ids.map(encodeURIComponent).join(",")
-        );
-        batch.forEach((c) => { names[c.id] = c.name; });
-      } catch (_) { /* ids only */ }
-      meta.hidden_query_group_ids.forEach((id) => {
-        const li = document.createElement("li");
-        li.textContent = names[id] ? names[id] + " (" + id + ")" : id;
-        ul.appendChild(li);
-      });
-      det.appendChild(ul);
-      strip.appendChild(det);
-    }
   }
 
   function fuseScore(item, weights) {
