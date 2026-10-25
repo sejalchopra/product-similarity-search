@@ -52,3 +52,11 @@ artifacts/tuned_weights.smoke.json
 # --- Local eval smoke outputs (canonical metrics in docs/) ---
 docs/eval.smoke.json
 docs/eval-smoke.log
+docs/eval.medium.json
+
+# --- Medium eval artifacts & backups (canonical: docs/eval.json) ---
+artifacts/tuned_weights.medium.json
+artifacts/backup/
+
+# --- Run logs ---
+logs/
