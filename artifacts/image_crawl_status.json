@@ -1,0 +1,19 @@
+{
+  "rows": 30000,
+  "usable_images": 29861,
+  "image_coverage": 0.9953666666666666,
+  "reasons": {
+    "cache_hit": 29854,
+    "empty_url": 2,
+    "downloaded": 7,
+    "http_404": 137
+  },
+  "http_status": {
+    "200": 7,
+    "404": 137
+  },
+  "elapsed_sec": 15.93160416604951,
+  "time_limit_sec": 5400.0,
+  "workers": 16,
+  "timeout_sec": 8.0
+}

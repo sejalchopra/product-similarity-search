@@ -1,0 +1,437 @@
+{
+  "enabled_by_env": false,
+  "rows": 30000,
+  "rows_backfilled": 304,
+  "missing_brand_rate_before": 0.2796,
+  "missing_brand_rate_after": 0.2694666666666667,
+  "eligible_brand_count": 145,
+  "top_inferred_brands": [
+    {
+      "brand": "cherokee",
+      "rows": 260
+    },
+    {
+      "brand": "biba",
+      "rows": 18
+    },
+    {
+      "brand": "ada",
+      "rows": 8
+    },
+    {
+      "brand": "indian virasat",
+      "rows": 4
+    },
+    {
+      "brand": "harpa",
+      "rows": 3
+    },
+    {
+      "brand": "gosriki",
+      "rows": 2
+    },
+    {
+      "brand": "speedo",
+      "rows": 2
+    },
+    {
+      "brand": "perfectblue",
+      "rows": 2
+    },
+    {
+      "brand": "van heusen woman",
+      "rows": 1
+    },
+    {
+      "brand": "qube by fort collins",
+      "rows": 1
+    },
+    {
+      "brand": "florence",
+      "rows": 1
+    },
+    {
+      "brand": "michelangelo",
+      "rows": 1
+    },
+    {
+      "brand": "ishin",
+      "rows": 1
+    }
+  ],
+  "review_sample": [
+    {
+      "title": "Cherokee Boy's Plain Regular fit T-Shirt",
+      "inferred_brand": "cherokee"
+    },
+    {
+      "title": "Cherokee by Unlimited Boy's Shorts",
+      "inferred_brand": "cherokee"
+    },
+    {
+      "title": "Cherokee by Unlimited Men's T-Shirt",
+      "inferred_brand": "cherokee"
+    },
+    {
+      "title": "Cherokee Boy's Plain Regular fit Shirt",
+      "inferred_brand": "cherokee"
+    },
+    {
+      "title": "Cherokee by Unlimited Women's Shirt",
+      "inferred_brand": "cherokee"
+    },
+    {
+      "title": "Cherokee by Unlimited Men's T-Shirt",
+      "inferred_brand": "cherokee"
+    },
+    {
+      "title": "Cherokee Boy's Plain Regular fit T-Shirt",
+      "inferred_brand": "cherokee"
+    },
+    {
+      "title": "Cherokee by Unlimited Girls' Regular Fit Jumpsuit(Colors & Print May Vary)",
+      "inferred_brand": "cherokee"
+    },
+    {
+      "title": "Cherokee by Unlimited Men's T-Shirt",
+      "inferred_brand": "cherokee"
+    },
+    {
+      "title": "Cherokee by Unlimited Women's Top",
+      "inferred_brand": "cherokee"
+    },
+    {
+      "title": "Cherokee by Unlimited Boys' Regular Fit Shorts(Colors & Print May Vary)",
+      "inferred_brand": "cherokee"
+    },
+    {
+      "title": "Cherokee by Unlimited Girls' Plain Regular Fit T-Shirt",
+      "inferred_brand": "cherokee"
+    },
+    {
+      "title": "Cherokee by Unlimited Men's T-Shirt",
+      "inferred_brand": "cherokee"
+    },
+    {
+      "title": "Cherokee by Unlimited Girls' Regular Fit Jumpsuit",
+      "inferred_brand": "cherokee"
+    },
+    {
+      "title": "Cherokee by Unlimited Women's Body Blouse Shirt",
+      "inferred_brand": "cherokee"
+    },
+    {
+      "title": "Cherokee by Unlimited Men's T-Shirt",
+      "inferred_brand": "cherokee"
+    },
+    {
+      "title": "Cherokee by Unlimited Girls' Plain Regular Fit T-Shirt",
+      "inferred_brand": "cherokee"
+    },
+    {
+      "title": "Cherokee by Unlimited Men's Checkered Regular Fit Casual Shirt",
+      "inferred_brand": "cherokee"
+    },
+    {
+      "title": "Cherokee by Unlimited Boys' Regular Fit Shorts",
+      "inferred_brand": "cherokee"
+    },
+    {
+      "title": "ADA Lucknowi Chikankari Handmade Regular Wear Cotton Kurta Kurti A220801",
+      "inferred_brand": "ada"
+    },
+    {
+      "title": "Biba Girls' Dress",
+      "inferred_brand": "biba"
+    },
+    {
+      "title": "Cherokee by Unlimited Men's T-Shirt",
+      "inferred_brand": "cherokee"
+    },
+    {
+      "title": "Cherokee by Unlimited Girls' T-Shirt",
+      "inferred_brand": "cherokee"
+    },
+    {
+      "title": "Cherokee by Unlimited Boys' Regular Fit Cotton Shorts (272336771 KHAKI 07Y OS-14.5)",
+      "inferred_brand": "cherokee"
+    },
+    {
+      "title": "Cherokee by Unlimited Women's Body Blouse Shirt",
+      "inferred_brand": "cherokee"
+    },
+    {
+      "title": "Cherokee by Unlimited Boys' Plain Regular Fit T-Shirt",
+      "inferred_brand": "cherokee"
+    },
+    {
+      "title": "Cherokee by Unlimited Men's Solid Regular Fit Casual Shirt",
+      "inferred_brand": "cherokee"
+    },
+    {
+      "title": "Cherokee by Unlimited Boys' Plain Regular Fit T-Shirt",
+      "inferred_brand": "cherokee"
+    },
+    {
+      "title": "Cherokee by Unlimited Girls' Plain Regular Fit T-Shirt",
+      "inferred_brand": "cherokee"
+    },
+    {
+      "title": "Cherokee by Unlimited Boys' Plain Regular Fit T-Shirt (Pack of 3)(Colors & Print May Vary)",
+      "inferred_brand": "cherokee"
+    },
+    {
+      "title": "Cherokee by Unlimited Boys' Plain Regular Fit T-Shirt",
+      "inferred_brand": "cherokee"
+    },
+    {
+      "title": "Cherokee by Unlimited Men's T-Shirt",
+      "inferred_brand": "cherokee"
+    },
+    {
+      "title": "Cherokee by Unlimited Men's Solid Regular Fit T-shirt",
+      "inferred_brand": "cherokee"
+    },
+    {
+      "title": "Cherokee Girl's Plain Regular fit T-Shirt",
+      "inferred_brand": "cherokee"
+    },
+    {
+      "title": "Cherokee by Unlimited Boys' Plain Regular Fit T-Shirt",
+      "inferred_brand": "cherokee"
+    },
+    {
+      "title": "Biba Girls' Dress",
+      "inferred_brand": "biba"
+    },
+    {
+      "title": "Cherokee by Unlimited Women's Button Down Shirt",
+      "inferred_brand": "cherokee"
+    },
+    {
+      "title": "Biba Girls' Dress",
+      "inferred_brand": "biba"
+    },
+    {
+      "title": "Cherokee Boy's Striped Regular fit T-Shirt",
+      "inferred_brand": "cherokee"
+    },
+    {
+      "title": "Biba Girls' Dress",
+      "inferred_brand": "biba"
+    },
+    {
+      "title": "Cherokee by Unlimited Women's Shirt",
+      "inferred_brand": "cherokee"
+    },
+    {
+      "title": "Cherokee by Unlimited Women's Body Blouse Shirt",
+      "inferred_brand": "cherokee"
+    },
+    {
+      "title": "Cherokee by Unlimited Boys' Plain Regular Fit T-Shirt",
+      "inferred_brand": "cherokee"
+    },
+    {
+      "title": "Cherokee by Unlimited Girls' A-Line Knee-Long Dress",
+      "inferred_brand": "cherokee"
+    },
+    {
+      "title": "Cherokee by Unlimited Men's Solid Regular Fit T-shirt",
+      "inferred_brand": "cherokee"
+    },
+    {
+      "title": "Cherokee by Unlimited Girls' Plain Regular Fit T-Shirt",
+      "inferred_brand": "cherokee"
+    },
+    {
+      "title": "Cherokee by Unlimited Boys' Plain Regular Fit T-Shirt",
+      "inferred_brand": "cherokee"
+    },
+    {
+      "title": "Cherokee by Unlimited Girls' T-Shirt",
+      "inferred_brand": "cherokee"
+    },
+    {
+      "title": "Cherokee by Unlimited Women's Shirt",
+      "inferred_brand": "cherokee"
+    },
+    {
+      "title": "Cherokee by Unlimited Girls' Plain Regular Fit T-Shirt",
+      "inferred_brand": "cherokee"
+    }
+  ],
+  "brands_matched_by_multiple_prefix_rules": [],
+  "rows_with_multiple_prefix_matches": 0,
+  "multiple_prefix_examples": [],
+  "title_groups": {
+    "unique_groups_before": 21627,
+    "unique_groups_after": 21627,
+    "largest_before": [
+      {
+        "title_group": 99,
+        "row_count": 81
+      },
+      {
+        "title_group": 89,
+        "row_count": 70
+      },
+      {
+        "title_group": 238,
+        "row_count": 63
+      },
+      {
+        "title_group": 202,
+        "row_count": 55
+      },
+      {
+        "title_group": 182,
+        "row_count": 48
+      },
+      {
+        "title_group": 284,
+        "row_count": 48
+      },
+      {
+        "title_group": 52,
+        "row_count": 43
+      },
+      {
+        "title_group": 320,
+        "row_count": 43
+      },
+      {
+        "title_group": 3274,
+        "row_count": 43
+      },
+      {
+        "title_group": 1921,
+        "row_count": 41
+      }
+    ],
+    "largest_after": [
+      {
+        "title_group": 99,
+        "row_count": 81
+      },
+      {
+        "title_group": 89,
+        "row_count": 70
+      },
+      {
+        "title_group": 238,
+        "row_count": 63
+      },
+      {
+        "title_group": 202,
+        "row_count": 55
+      },
+      {
+        "title_group": 182,
+        "row_count": 48
+      },
+      {
+        "title_group": 284,
+        "row_count": 48
+      },
+      {
+        "title_group": 52,
+        "row_count": 43
+      },
+      {
+        "title_group": 320,
+        "row_count": 43
+      },
+      {
+        "title_group": 3274,
+        "row_count": 43
+      },
+      {
+        "title_group": 1921,
+        "row_count": 41
+      }
+    ],
+    "watched_groups": [
+      {
+        "title_group_before": 238,
+        "rows_before": 63,
+        "sample_titles": [
+          "W for Woman Straight Kurta",
+          "W for Woman Straight Kurta",
+          "W for Woman Straight Kurta"
+        ],
+        "sample_brands_before": [
+          "",
+          "",
+          ""
+        ],
+        "sample_brands_after": [
+          "",
+          "",
+          ""
+        ],
+        "lands_in": [
+          {
+            "title_group_after": 238,
+            "rows_from_this_group": 63,
+            "destination_group_rows": 63
+          }
+        ]
+      },
+      {
+        "title_group_before": 202,
+        "rows_before": 55,
+        "sample_titles": [
+          "W for Woman Women's Straight Kurta",
+          "W for Woman Women's Straight Kurta",
+          "W for Woman Women's Straight Kurta"
+        ],
+        "sample_brands_before": [
+          "",
+          "",
+          ""
+        ],
+        "sample_brands_after": [
+          "",
+          "",
+          ""
+        ],
+        "lands_in": [
+          {
+            "title_group_after": 202,
+            "rows_from_this_group": 55,
+            "destination_group_rows": 55
+          }
+        ]
+      },
+      {
+        "title_group_before": 284,
+        "rows_before": 48,
+        "sample_titles": [
+          "W for Women's Straight Kurta",
+          "W for Women's Straight Kurta",
+          "W for Women's Straight Kurta"
+        ],
+        "sample_brands_before": [
+          "",
+          "",
+          ""
+        ],
+        "sample_brands_after": [
+          "",
+          "",
+          ""
+        ],
+        "lands_in": [
+          {
+            "title_group_after": 284,
+            "rows_from_this_group": 48,
+            "destination_group_rows": 48
+          }
+        ]
+      }
+    ]
+  },
+  "applied_to_catalog": false,
+  "flag": "BRAND_BACKFILL=1 required to write brands; left off"
+}

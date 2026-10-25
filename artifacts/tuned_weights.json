@@ -1,0 +1,15 @@
+{
+  "text_image_transform": "tail_log",
+  "beta": 1.0,
+  "w": {
+    "text": 0.3,
+    "image": 0.15,
+    "category": 0.15,
+    "audience": 0.08,
+    "brand": 0.1,
+    "color": 0.08,
+    "price": 0.08,
+    "rating": 0.04,
+    "weight": 0.02
+  }
+}
