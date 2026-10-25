@@ -10,8 +10,11 @@ where it did.
 
 **Local**
 
+Needs Python 3.11 or newer. On this Mac, `python3` is 3.9, so the venv below
+uses `python3.12`.
+
 ```bash
-python3 -m venv .venv && source .venv/bin/activate
+python3.12 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 make run-local          # http://localhost:8000
 ```
