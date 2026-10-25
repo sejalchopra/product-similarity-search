@@ -47,5 +47,7 @@ promote-smoke:
 bench:
 	PYTHONPATH=. $(PY) scripts/bench_hnsw.py
 
+DEMO_BASE ?= http://127.0.0.1:8000
+
 demo-warm:
-	PYTHONPATH=. $(PY) scripts/demo_warm.py $(DEMO_BASE)
+	PYTHONPATH=. $(PY) scripts/demo_warm.py --base $(DEMO_BASE)
