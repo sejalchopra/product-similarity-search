@@ -1,0 +1,14 @@
+# Stretch profile — optional Qdrant demo (not required for the assignment path).
+services:
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      SEARCH_MODE: exact
+  qdrant:
+    image: qdrant/qdrant:latest
+    ports:
+      - "6333:6333"
+    profiles:
+      - stretch
