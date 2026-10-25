@@ -17,22 +17,37 @@ def _current_state_body(eval_data: dict[str, Any]) -> str:
     run = eval_data.get("run", {})
     if not isinstance(run, dict):
         run = {}
+    git_sha = run.get("git_sha", "—")
+    if isinstance(git_sha, dict):
+        git_sha = git_sha.get("sha", "—")
     lat = eval_data.get("latency_exact", {})
     if not isinstance(lat, dict):
         lat = {}
     blocks = eval_data.get("active_blocks", {})
     if not isinstance(blocks, dict):
         blocks = {}
+    split = eval_data.get("split")
+    if not isinstance(split, dict):
+        split = {}
+    smoke = bool(eval_data.get("smoke", run.get("smoke", False)))
+    capped = bool(eval_data.get("capped"))
+    if smoke:
+        eval_mode = "smoke (capped)"
+    elif capped:
+        eval_mode = "capped (not smoke)"
+    else:
+        eval_mode = "full (uncapped)"
     lines = [
         "## Current state (from eval.json)",
         "",
         f"- **Generated (UTC):** {run.get('timestamp_utc', '—')}",
-        f"- **Git SHA:** {run.get('git_sha', '—')}",
-        f"- **Smoke run:** {eval_data.get('smoke', run.get('smoke', eval_data.get('fast_eval')))}",
+        f"- **Git SHA:** {git_sha}",
+        f"- **Eval mode:** {eval_mode}",
         f"- **Split hash:** {_split_hash(eval_data)}",
-        f"- **Queries:** tune {eval_data.get('tune_queries')}, "
-        f"validation {eval_data.get('validation_queries')}, "
-        f"test {eval_data.get('test_queries')}",
+        f"- **Queries (used / available):** tune {eval_data.get('tune_queries')} / "
+        f"{split.get('tune_queries_full', '—')}, validation "
+        f"{eval_data.get('validation_queries')} / {split.get('validation_queries_full', '—')}, "
+        f"test {eval_data.get('test_queries')} / {split.get('test_queries_full', '—')}",
         f"- **Selected variant:** {eval_data.get('selected_variant', 'binary')}",
         f"- **Shipped transform:** {eval_data.get('shipped_transform', '—')}",
         f"- **Image coverage:** {eval_data.get('image_coverage')}",

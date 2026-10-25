@@ -1,4 +1,4 @@
-.PHONY: lint test build run-local index eval eval-smoke eval-medium promote-smoke bench
+.PHONY: lint test build run-local index eval eval-smoke eval-medium promote-smoke bench demo-warm
 
 PYTHON ?= python3
 ifeq ($(wildcard .venv/bin/python),)
@@ -46,3 +46,6 @@ promote-smoke:
 
 bench:
 	PYTHONPATH=. $(PY) scripts/bench_hnsw.py
+
+demo-warm:
+	PYTHONPATH=. $(PY) scripts/demo_warm.py $(DEMO_BASE)

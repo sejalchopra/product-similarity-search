@@ -1,4 +1,23 @@
 {
+  "source": "medium",
+  "timestamp_utc": "2026-10-25T10:34:29Z",
+  "git": {
+    "sha": "6b5050eda342720c67c4748965fada6e38831c01",
+    "status": "ok"
+  },
+  "split": {
+    "train_groups": 8196,
+    "val_groups": 2732,
+    "test_groups": 2732,
+    "hash": "e400213588923827",
+    "tune_queries_full": 12660,
+    "validation_queries_full": 4224,
+    "test_queries_full": 4135,
+    "tune_queries": 1500,
+    "validation_queries": 1500,
+    "test_queries": 2000
+  },
+  "selected_variant": "binary",
   "text_image_transform": "tail_log",
   "beta": 1.0,
   "w": {
@@ -11,5 +30,22 @@
     "price": 0.08,
     "rating": 0.04,
     "weight": 0.02
+  },
+  "w_sum": 1.0,
+  "selection_reason": "only binary variant available or binary won outright",
+  "transform_selection_reason": "default tail_log tied or led validation mean NDCG",
+  "guardrails": {
+    "validation_default": {
+      "same_audience_share10": 0.9900000000000004,
+      "same_child_share10": 0.9461333333333337,
+      "same_family_share10": 0.9474000000000002
+    },
+    "validation_tuned_candidate": {
+      "same_audience_share10": 0.9912000000000007,
+      "same_child_share10": 0.8497999999999999,
+      "same_family_share10": 0.8572666666666661
+    },
+    "accepted_tuned": false,
+    "rejection_reason": "same_child_share10 0.850 < default 0.946 - 0.03"
   }
 }

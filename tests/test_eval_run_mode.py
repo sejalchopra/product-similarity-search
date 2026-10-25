@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import os
-
 import pytest
 
 from scripts.evaluate import _eval_run_mode

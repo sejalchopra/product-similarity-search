@@ -2,18 +2,76 @@
 
 All metrics below are copied from [`eval.json`](eval.json) (`make eval`). Do not hand-edit numbers in the eval region.
 
-**Eval tiers:** `make eval-smoke`, `make eval-medium` (default capped query env vars in the Makefile), and `make eval` share one pipeline. Smoke and medium write only to gitignored `docs/eval.smoke.json` and `docs/eval.medium.json`; they do not overwrite `docs/eval.json`. Pool stages resume from `artifacts/eval_cache/`. Only `make eval` refreshes the generated blocks in this file.
+**Eval tiers:** `make eval-smoke` and `make eval-medium` write gitignored sidecar JSON; promoting a capped run copies into `docs/eval.json` (current file). `make eval` runs uncapped and refreshes the generated blocks below. Pool stages resume from `artifacts/eval_cache/`.
 
 <!-- current_state:start -->
 ## Current state (from eval.json)
 
-_Run `make eval` to populate this block from `docs/eval.json`._
+- **Generated (UTC):** 2026-10-25T10:34:28Z
+- **Git SHA:** 6b5050eda342720c67c4748965fada6e38831c01
+- **Eval mode:** capped (not smoke)
+- **Split hash:** e400213588923827
+- **Queries (used / available):** tune 1500 / 12660, validation 1500 / 4224, test 2000 / 4135
+- **Selected variant:** binary
+- **Shipped transform:** tail_log
+- **Image coverage:** 0.9953666666666666
+- **Image weight in tuning:** active
+- **Latency /find_similar_products (lean):** p50 166.73516645096242 ms, p95 173.74844231526365 ms
+- **Latency full-catalog w/ metadata:** p50 — ms, p95 — ms
+- **Active blocks (pair-active or coverage):** {'text': True, 'category': True, 'audience': True, 'brand': True, 'image': True, 'color': True, 'price': True, 'rating': True, 'weight': False}
+
 <!-- current_state:end -->
 
 <!-- eval:start -->
-## Problem and data
+## Problem and data (from eval.json)
 
-See `eval.json` after `make eval`.
+- **Eval run:** capped (not smoke). Query caps: tune **1500** / 12660, validation **1500** / 4224, test **2000** / 4135.
+- **Catalog:** 30000 rows.
+- **Image coverage:** 0.9953666666666666.
+- **Title groups:** 21627 unique keys for variant dedup.
+- **Splits:** tune 1500, validation 1500, test 2000 queries.
+
+## Scoring
+
+Shipped transform: **tail_log** (chosen on validation). Selected variant: **binary** — only binary variant available or binary won outright.
+
+Weight search: search moved weights (see eval.json → weight_search.search_trace).
+
+Image block in tuning: active.
+
+## Test evaluation (co-purchase @ title_group)
+
+Metrics below are computed **once** on the held-out test split after selection. Cluster-bootstrap 95% CIs.
+
+| Method | NDCG@10 | Hit@10 |
+|--------|---------|--------|
+| Fusion (selected) | 0.284 [0.268, 0.302] | 0.603 [0.574, 0.631] |
+| MiniLM-only | 0.248 [0.232, 0.265] | 0.556 [0.527, 0.586] |
+| Popularity (same child) | 0.052 [0.045, 0.060] | 0.157 [0.139, 0.175] |
+
+Validation scores for transforms and variants: `eval.json` → `validation_transform_ndcg10`, `validation_variant`.
+
+Pair-active rates: color 0.2382, price 0.8212, rating 0.73, weight 0.0434, image 0.9953666666666666.
+
+Dedup merge: {'missing_brand_rows_reassigned': 16, 'largest_title_groups': [{'title_group': 99, 'row_count': 81}, {'title_group': 89, 'row_count': 70}, {'title_group': 238, 'row_count': 63}, {'title_group': 202, 'row_count': 55}, {'title_group': 182, 'row_count': 48}, {'title_group': 284, 'row_count': 48}, {'title_group': 52, 'row_count': 43}, {'title_group': 320, 'row_count': 43}, {'title_group': 3274, 'row_count': 43}, {'title_group': 1921, 'row_count': 41}, {'title_group': 80, 'row_count': 40}, {'title_group': 1101, 'row_count': 39}, {'title_group': 369, 'row_count': 37}, {'title_group': 1452, 'row_count': 36}, {'title_group': 509, 'row_count': 35}, {'title_group': 527, 'row_count': 35}, {'title_group': 548, 'row_count': 35}, {'title_group': 763, 'row_count': 34}, {'title_group': 44, 'row_count': 33}, {'title_group': 554, 'row_count': 33}]}.
+
+## Blazze before / after (generated)
+
+| Rank | Before (binary) | After (selected) |
+|------|-----------------|------------------|
+| 1 | The Blazze Men's Modal G String Sexy Low Rise Briefs Panties, Men Boxer Underpants Shorts Underwear Bulge Pouch Funny Thongs (0.5615524793825368) | The Blazze Men's Modal G String Sexy Low Rise Briefs Panties, Men Boxer Underpants Shorts Underwear Bulge Pouch Funny Thongs (0.5615524793825368) |
+| 2 | La Intimo Men’s Nylon Spandex Lace Thong Underwear (0.4643356359569048) | La Intimo Men’s Nylon Spandex Lace Thong Underwear (0.4643356359569048) |
+| 3 | The Blazze 1013 Women's Thong High Rise Sexy Solid G-String Thong Bikini T-String Sexy Lingerie Hipsters Panties Briefs (0.4214149595505697) | The Blazze 1013 Women's Thong High Rise Sexy Solid G-String Thong Bikini T-String Sexy Lingerie Hipsters Panties Briefs (0.4214149595505697) |
+| 4 | The Blazze 0017 Men's Round Neck Half Sleeve Cotton T-Shirt for Men (0.406984000066293) | The Blazze 0017 Men's Round Neck Half Sleeve Cotton T-Shirt for Men (0.406984000066293) |
+| 5 | THE BLAZZE Men's Sleeveless T-Shirt Tank Top Gym Tank Stringer Vest for Men (0.39902506271042604) | THE BLAZZE Men's Sleeveless T-Shirt Tank Top Gym Tank Stringer Vest for Men (0.39902506271042604) |
+| 6 | THE BLAZZE Sleeveless T Shirts for Men (0.39881523250897205) | THE BLAZZE Sleeveless T Shirts for Men (0.39881523250897205) |
+| 7 | The Blazze Navy Outdoor Seamless Bandanas Tube Headband for Men and Women (0.3889042525911601) | The Blazze Navy Outdoor Seamless Bandanas Tube Headband for Men and Women (0.3889042525911601) |
+| 8 | The Blazze Outdoor Seamless Bandanas Tube,Womens and Mens Headband Headwear Headwrap (0.38213529578297223) | The Blazze Outdoor Seamless Bandanas Tube,Womens and Mens Headband Headwear Headwrap (0.38213529578297223) |
+| 9 | The Blazze 0005 Men's Gym Tank Gym Stringer Gym Tank Stringer Bodybuilding Tank Tops Gym Vest Muscle Tee for Men (0.3751788632826174) | The Blazze 0005 Men's Gym Tank Gym Stringer Gym Tank Stringer Bodybuilding Tank Tops Gym Vest Muscle Tee for Men (0.3751788632826174) |
+| 10 | THE BLAZZE Men's Bodybuilding Gym Solid Color Tank Top Stringers (0.37231256958123443) | THE BLAZZE Men's Bodybuilding Gym Solid Color Tank Top Stringers (0.37231256958123443) |
+
+Ranking changed: **False**.
+
 <!-- eval:end -->
 
 ## Problem and messy catalog (narrative)
@@ -48,15 +106,25 @@ Similarity is a **weighted sum of nine blocks** (text, image, category, audience
 
 ## Findings (qualitative; numbers in eval JSON)
 
-- **Fusion vs text-only:** On validation and test, fusion is intended to beat MiniLM-only when tabular blocks carry signal; see paired CI fields in the generated eval block and `test_results`.
-- **Percentile vs tail-log:** Percentile calibration underperformed tail-log on validation pooled NDCG; transform selection reason is in `transform_selection_reason` / `transform_selection_meta`.
-- **Tuned weights:** Search often nudges weights, but **guardrails frequently reject** the tuned vector; shipped weights remain the hand-set defaults in `artifacts/tuned_weights.json` (`unchanged_reason` in `weight_search`).
-- **Category-affinity variant (A):** Variant **A** (category affinity table) is compared to binary category on validation; selection metadata documents whether it ships (`selected_variant`, `selection_reason`).
-- **Blazze-type queries:** Long, attribute-heavy titles stress text and imputation; case studies and weight comparisons are under `cases.blazze` and `cases.blazze_weights_compare` (see also [blazze-ranking.md](blazze-ranking.md)).
+- **Fusion vs text-only:** See paired bootstrap CIs in `paired_ndcg_fusion_minus_minilm` and the generated test table.
+- **Percentile vs tail-log:** Percentile calibration underperformed tail-log on validation pooled NDCG (`transform_selection_reason`, `validation_transform_ndcg10_pooled`).
+- **Variant selection:** **Binary** category mode had **higher validation pooled NDCG** than affinity variant **A** and **better guardrail agreement shares** on validation (`selection_meta.validation_means`, `variant_guardrails_binary_vs_A`). Variant A was evaluated, not omitted for lack of code—the simpler binary profile won on validation and safety checks. (Ignore the legacy phrase in `selection_reason`; use the means above.)
+- **Tuned weights:** Coordinate ascent proposed a candidate vector, but **guardrails rejected** it (`guardrails.accepted_tuned`, `rejection_reason`). **Hand-set defaults** in `artifacts/tuned_weights.json` ship; see `weight_search.unchanged_reason`.
+- **Blazze-type queries:** Long, attribute-heavy titles stress text and imputation; see `cases.blazze` and `cases.blazze_weights_compare` ([blazze-ranking.md](blazze-ranking.md)).
+
+## Comparability with earlier runs
+
+Metrics in `docs/eval.json` are **not directly comparable** to earlier smoke or pre-dedup runs: co-purchase label construction, title-group splits, and dedup rules evolved (`split.hash`, `dedup_merge`). Compare only runs that share the same split hash and pipeline version.
 
 ## Latency (exact path)
 
-Latency numbers are under `latency_exact` in eval JSON (500-query benchmark on loaded artifacts). They contrast lean `/find_similar_products` with full-catalog scoring paths. In-process LRU caching backs repeated `/find_similar_products` calls; do not run heavy jobs alongside eval if you want a clean latency stage measurement.
+Stage timings are in `run.runtime_stages_sec`. **Hotspots** in the capped run: pooled **train/eval pool builds**, **variant guardrail share audits**, and **exact validation** over 1.5k queries dominate wall time; bootstrap is cheap. Online **`latency_exact`** (500-query sample) is in eval JSON. In-process LRU caching helps repeat `/find_similar_products` calls.
+
+**Next step (serving):** replace linear `uniq_id` dict lookup with **`numpy` structured arrays or `pandas` index** for hot paths if profiling shows Python dict overhead; keep fusion math unchanged.
+
+**Next step (tuning):** **constrained search**—e.g. category weight floor and higher image weight cap when coverage is high—so guardrails pass without collapsing child-category agreement.
+
+In-process LRU caching backs repeated `/find_similar_products` calls.
 
 ## ANN / HNSW
 

@@ -1147,9 +1147,7 @@ def main() -> None:
         test_full=len(test_all),
     )
 
-    query_caps = (
-        {"tune": cap_tune, "validation": cap_val, "test": cap_test} if capped else None
-    )
+    query_caps = {"tune": cap_tune, "validation": cap_val, "test": cap_test} if capped else None
     report: dict[str, Any] = {
         "smoke": smoke,
         "capped": capped,

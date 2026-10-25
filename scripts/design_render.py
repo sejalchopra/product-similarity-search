@@ -60,9 +60,25 @@ def render_design(eval_data: dict[str, Any], design_path: Path) -> None:
         else {}
     )
 
+    split = eval_data.get("split") if isinstance(eval_data.get("split"), dict) else {}
+    smoke = bool(eval_data.get("smoke"))
+    capped = bool(eval_data.get("capped"))
+    if smoke:
+        run_label = "smoke (capped)"
+    elif capped:
+        run_label = "capped (not smoke)"
+    else:
+        run_label = "full (uncapped)"
+    cap_line = (
+        f"tune **{eval_data.get('tune_queries')}** / {split.get('tune_queries_full')}, "
+        f"validation **{eval_data.get('validation_queries')}** / {split.get('validation_queries_full')}, "
+        f"test **{eval_data.get('test_queries')}** / {split.get('test_queries_full')}"
+    )
+
     body = f"""{start}
 ## Problem and data (from eval.json)
 
+- **Eval run:** {run_label}. Query caps: {cap_line}.
 - **Catalog:** {eval_data.get("row_count")} rows.
 - **Image coverage:** {eval_data.get("image_coverage")}.
 - **Title groups:** {tg.get("unique_groups") if isinstance(tg, dict) else "—"} unique keys for variant dedup.

@@ -5,7 +5,19 @@ This document summarizes what was built for the **verifiable rankings demo** pla
 <!-- current_state:start -->
 ## Current state (from eval.json)
 
-_Run `make eval` to populate this block from `docs/eval.json`._
+- **Generated (UTC):** 2026-10-25T10:34:28Z
+- **Git SHA:** 6b5050eda342720c67c4748965fada6e38831c01
+- **Eval mode:** capped (not smoke)
+- **Split hash:** e400213588923827
+- **Queries (used / available):** tune 1500 / 12660, validation 1500 / 4224, test 2000 / 4135
+- **Selected variant:** binary
+- **Shipped transform:** tail_log
+- **Image coverage:** 0.9953666666666666
+- **Image weight in tuning:** active
+- **Latency /find_similar_products (lean):** p50 166.73516645096242 ms, p95 173.74844231526365 ms
+- **Latency full-catalog w/ metadata:** p50 — ms, p95 — ms
+- **Active blocks (pair-active or coverage):** {'text': True, 'category': True, 'audience': True, 'brand': True, 'image': True, 'color': True, 'price': True, 'rating': True, 'weight': False}
+
 <!-- current_state:end -->
 
 ---
@@ -220,7 +232,7 @@ Metrics use **co-purchase relevance**: other products whose normalized title app
 
 ## D. Blazze-style qualitative reading
 
-When many blocks are imputed equally for all candidates, **order is decided by the few observed blocks** (text, brand, price, category). Same-brand T-shirts can beat other briefs **without** beating the only other true same-category thong — category contribution (0.15) can dominate brand (0.10). That is expected fusion behavior, not a dedup bug.
+When many blocks are imputed equally for all candidates, **order is decided by the few observed blocks** (text, brand, price, category). Same-brand items can outrank closer category matches when category block weight exceeds brand weight in the shipped vector—see `meta.weights` via `/explore` and `artifacts/tuned_weights.json`. That is expected fusion behavior, not a dedup bug.
 
 ## E. Latency (`latency_exact`)
 
