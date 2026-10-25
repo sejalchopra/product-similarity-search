@@ -12,24 +12,31 @@ def _fmt_ci(d: dict[str, object] | None) -> str:
     return f"{d.get('mean', 0):.3f} [{d.get('lo', 0):.3f}, {d.get('hi', 0):.3f}]"
 
 
-def _blazze_table(case: dict[str, object]) -> str:
+def _ranking_case_table(case: dict[str, object]) -> str:
     if case.get("error"):
-        return f"_Blazze case: {case.get('error')}_"
+        return f"_Demo ranking case: {case.get('error')}_"
+    qname = case.get("query_name") or case.get("query_id") or "—"
     lines = [
+        f"Query: **{qname}** (`{case.get('query_id', '—')}`).",
+        "",
         "| Rank | Before (binary) | After (selected) |",
         "|------|-----------------|------------------|",
     ]
     before = case.get("binary_top10", [])
     after = case.get("selected_top10", [])
     if not isinstance(before, list) or not isinstance(after, list):
-        return "_No Blazze table in eval.json._"
+        return "_No demo ranking table in eval.json._"
     for i in range(max(len(before), len(after))):
         b = before[i] if i < len(before) else {}
         a = after[i] if i < len(after) else {}
         if isinstance(b, dict) and isinstance(a, dict):
+            bs = b.get("score")
+            as_ = a.get("score")
+            bsc = f"{float(bs):.3f}" if isinstance(bs, (int, float)) else "—"
+            asc = f"{float(as_):.3f}" if isinstance(as_, (int, float)) else "—"
             lines.append(
-                f"| {i + 1} | {b.get('name', '—')} ({b.get('score', '—')}) | "
-                f"{a.get('name', '—')} ({a.get('score', '—')}) |"
+                f"| {i + 1} | {b.get('name', '—')} ({bsc}) | "
+                f"{a.get('name', '—')} ({asc}) |"
             )
     changed = case.get("ranking_changed")
     lines.append("")
@@ -54,11 +61,8 @@ def render_design(eval_data: dict[str, Any], design_path: Path) -> None:
     tg = eval_data.get("title_group_hist", {})
     ws = eval_data.get("weight_search", {})
     unchanged = ws.get("unchanged_reason") if isinstance(ws, dict) else None
-    blazze = (
-        eval_data.get("cases", {}).get("blazze", {})
-        if isinstance(eval_data.get("cases"), dict)
-        else {}
-    )
+    cases = eval_data.get("cases") if isinstance(eval_data.get("cases"), dict) else {}
+    demo_ranking = cases.get("demo_ranking", {}) if isinstance(cases, dict) else {}
 
     split = eval_data.get("split") if isinstance(eval_data.get("split"), dict) else {}
     smoke = bool(eval_data.get("smoke"))
@@ -108,9 +112,9 @@ Pair-active rates: color {pair.get("color")}, price {pair.get("price")}, rating 
 
 Dedup merge: {eval_data.get("dedup_merge", {})}.
 
-## Blazze before / after (generated)
+## Example ranking (binary vs selected, generated)
 
-{_blazze_table(blazze if isinstance(blazze, dict) else {})}
+{_ranking_case_table(demo_ranking if isinstance(demo_ranking, dict) else {})}
 
 {end}"""
     before, _ = text.split(start, 1)

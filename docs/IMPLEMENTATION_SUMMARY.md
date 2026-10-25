@@ -224,7 +224,7 @@ Metrics use **co-purchase relevance**: other products whose normalized title app
 | **validation_variant_ndcg10_pooled** | Per-variant validation NDCG | Chooses `selected_variant`. |
 | **weight_search.search_trace** | Dirichlet + coordinate steps | If final weights equal start, read **`unchanged_reason`**. |
 | **selected_variant** / **selection_reason** | A, B, A+B, or binary | Profile after validation selection. |
-| **cases.blazze** | Top 10 under binary vs selected | Qualitative sanity check; see also [blazze-ranking.md](blazze-ranking.md). |
+| **cases.demo_ranking** | Top 10 under binary vs selected (README tracksuit) | Shown in DESIGN.md; sparse-category notes in [blazze-ranking.md](blazze-ranking.md). |
 
 **Splits:** Tune on **train** (≥1500 queries when available); pick transform and variant on **validation**; report **test** metrics (with CIs) once after selection.
 

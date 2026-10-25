@@ -64,11 +64,9 @@ def blazze_comparison_table(
     selected_variant: str,
     variant_a_fw: FusionWeights | None = None,
 ) -> dict[str, Any]:
-    needle = "modal v back g string"
-    qrow = next(
-        (i for i, name in enumerate(catalog.product_names) if needle in name.lower()),
-        None,
-    )
+    from service.config import DEMO_QUERY_PRODUCT_ID
+
+    qrow = catalog.id_to_row.get(DEMO_QUERY_PRODUCT_ID)
     if qrow is None:
         return {"error": "query not found"}
     prof = ScoringProfile.from_variant(selected_variant)

@@ -114,7 +114,7 @@ Tables are generated into [docs/DESIGN.md](docs/DESIGN.md). The report is
 ## Limitations and next steps
 
 - The labels are noisy. Read the metrics as comparisons between methods.
-- Some queries rank a neighboring product type above a closer one when the category is sparse. See the Blazze G-string case in [docs/blazze-ranking.md](docs/blazze-ranking.md) and the generated before/after table in [docs/DESIGN.md](docs/DESIGN.md). A category-affinity variant was tested; the binary category score won on validation.
+- Some queries rank a neighboring product type above a closer one when the category is sparse. The generated example ranking in [docs/DESIGN.md](docs/DESIGN.md) uses the Monte Carlo tracksuit from the demo; a sparse-category write-up is in [docs/blazze-ranking.md](docs/blazze-ranking.md). A category-affinity variant was tested; the binary category score won on validation.
 - Uncached exact queries are about 170 ms (p50 in `docs/eval.json` → `latency_exact`). The slowest blocks in that profile are price, image, and text.
 - `docs/bench_hnsw.json` is a 5,000-vector smoke run of pure HNSW. `make bench` defaults to 1,000,000 synthetic vectors. Neither measures the full candidate union (HNSW plus brand and category lists).
 - Next: faster block lookups, weight search with a floor on category agreement, and brand inference from titles (`BRAND_BACKFILL`, off by default).

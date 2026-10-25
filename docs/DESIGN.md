@@ -55,20 +55,22 @@ Pair-active rates: color 0.2382, price 0.8212, rating 0.73, weight 0.0434, image
 
 Dedup merge: {'missing_brand_rows_reassigned': 16, 'largest_title_groups': [{'title_group': 99, 'row_count': 81}, {'title_group': 89, 'row_count': 70}, {'title_group': 238, 'row_count': 63}, {'title_group': 202, 'row_count': 55}, {'title_group': 182, 'row_count': 48}, {'title_group': 284, 'row_count': 48}, {'title_group': 52, 'row_count': 43}, {'title_group': 320, 'row_count': 43}, {'title_group': 3274, 'row_count': 43}, {'title_group': 1921, 'row_count': 41}, {'title_group': 80, 'row_count': 40}, {'title_group': 1101, 'row_count': 39}, {'title_group': 369, 'row_count': 37}, {'title_group': 1452, 'row_count': 36}, {'title_group': 509, 'row_count': 35}, {'title_group': 527, 'row_count': 35}, {'title_group': 548, 'row_count': 35}, {'title_group': 763, 'row_count': 34}, {'title_group': 44, 'row_count': 33}, {'title_group': 554, 'row_count': 33}]}.
 
-## Blazze before / after (generated)
+## Example ranking (binary vs selected, generated)
+
+Query: **Monte Carlo Grey Solid Cotton Blend Polo Collar Tracksuit** (`ad8a5a196d515ef09dfdaf082bdc37c4`).
 
 | Rank | Before (binary) | After (selected) |
 |------|-----------------|------------------|
-| 1 | The Blazze Men's Modal G String Sexy Low Rise Briefs Panties, Men Boxer Underpants Shorts Underwear Bulge Pouch Funny Thongs (0.5615524793825368) | The Blazze Men's Modal G String Sexy Low Rise Briefs Panties, Men Boxer Underpants Shorts Underwear Bulge Pouch Funny Thongs (0.5615524793825368) |
-| 2 | La Intimo Men’s Nylon Spandex Lace Thong Underwear (0.4643356359569048) | La Intimo Men’s Nylon Spandex Lace Thong Underwear (0.4643356359569048) |
-| 3 | The Blazze 1013 Women's Thong High Rise Sexy Solid G-String Thong Bikini T-String Sexy Lingerie Hipsters Panties Briefs (0.4214149595505697) | The Blazze 1013 Women's Thong High Rise Sexy Solid G-String Thong Bikini T-String Sexy Lingerie Hipsters Panties Briefs (0.4214149595505697) |
-| 4 | The Blazze 0017 Men's Round Neck Half Sleeve Cotton T-Shirt for Men (0.406984000066293) | The Blazze 0017 Men's Round Neck Half Sleeve Cotton T-Shirt for Men (0.406984000066293) |
-| 5 | THE BLAZZE Men's Sleeveless T-Shirt Tank Top Gym Tank Stringer Vest for Men (0.39902506271042604) | THE BLAZZE Men's Sleeveless T-Shirt Tank Top Gym Tank Stringer Vest for Men (0.39902506271042604) |
-| 6 | THE BLAZZE Sleeveless T Shirts for Men (0.39881523250897205) | THE BLAZZE Sleeveless T Shirts for Men (0.39881523250897205) |
-| 7 | The Blazze Navy Outdoor Seamless Bandanas Tube Headband for Men and Women (0.3889042525911601) | The Blazze Navy Outdoor Seamless Bandanas Tube Headband for Men and Women (0.3889042525911601) |
-| 8 | The Blazze Outdoor Seamless Bandanas Tube,Womens and Mens Headband Headwear Headwrap (0.38213529578297223) | The Blazze Outdoor Seamless Bandanas Tube,Womens and Mens Headband Headwear Headwrap (0.38213529578297223) |
-| 9 | The Blazze 0005 Men's Gym Tank Gym Stringer Gym Tank Stringer Bodybuilding Tank Tops Gym Vest Muscle Tee for Men (0.3751788632826174) | The Blazze 0005 Men's Gym Tank Gym Stringer Gym Tank Stringer Bodybuilding Tank Tops Gym Vest Muscle Tee for Men (0.3751788632826174) |
-| 10 | THE BLAZZE Men's Bodybuilding Gym Solid Color Tank Top Stringers (0.37231256958123443) | THE BLAZZE Men's Bodybuilding Gym Solid Color Tank Top Stringers (0.37231256958123443) |
+| 1 | Monte Carlo Solid D.Maroon Coloured Polyester Tracksuit (0.580) | Monte Carlo Solid D.Maroon Coloured Polyester Tracksuit (0.580) |
+| 2 | Monte Carlo Grey Printed Cotton Round Neck Clothing Set (0.534) | Monte Carlo Grey Printed Cotton Round Neck Clothing Set (0.534) |
+| 3 | SHIV NARESH Unisex Tracksuit 40 Large Navy-Red-White Dobby Fabric (0.503) | SHIV NARESH Unisex Tracksuit 40 Large Navy-Red-White Dobby Fabric (0.503) |
+| 4 | Fashion7 Men's Polyester Tracksuit - Tracksuit for Men Sports (Blue) (0.495) | Fashion7 Men's Polyester Tracksuit - Tracksuit for Men Sports (Blue) (0.495) |
+| 5 | Gag Men's Sports Polyester Tracksuit (0.493) | Gag Men's Sports Polyester Tracksuit (0.493) |
+| 6 | Vivid Bharti Men's Black Grey Tracksuit (0.493) | Vivid Bharti Men's Black Grey Tracksuit (0.493) |
+| 7 | Puma Men's Cut-Out Regular Fit Tracksuit (0.491) | Puma Men's Cut-Out Regular Fit Tracksuit (0.491) |
+| 8 | SHIV NARESH Tracksuit -Navy Blue (0.490) | SHIV NARESH Tracksuit -Navy Blue (0.490) |
+| 9 | Aurro Sports Men's Polyester Tracksuit (0.488) | Aurro Sports Men's Polyester Tracksuit (0.488) |
+| 10 | Matelco Men's Cotton Blend Track Suit with Inner Fleece for Winters (Light Grey_AD07VR11) (0.487) | Matelco Men's Cotton Blend Track Suit with Inner Fleece for Winters (Light Grey_AD07VR11) (0.487) |
 
 Ranking changed: **False**.
 
@@ -110,7 +112,7 @@ Similarity is a **weighted sum of nine blocks** (text, image, category, audience
 - **Percentile vs tail-log:** Percentile calibration underperformed tail-log on validation pooled NDCG (`transform_selection_reason`, `validation_transform_ndcg10_pooled`).
 - **Variant selection:** **Binary** category mode had **higher validation pooled NDCG** than affinity variant **A** and **better guardrail agreement shares** on validation (`selection_meta.validation_means`, `variant_guardrails_binary_vs_A`). Variant A was evaluated, not omitted for lack of code—the simpler binary profile won on validation and safety checks. (Ignore the legacy phrase in `selection_reason`; use the means above.)
 - **Tuned weights:** Coordinate ascent proposed a candidate vector, but **guardrails rejected** it (`guardrails.accepted_tuned`, `rejection_reason`). **Hand-set defaults** in `artifacts/tuned_weights.json` ship; see `weight_search.unchanged_reason`.
-- **Blazze-type queries:** Long, attribute-heavy titles stress text and imputation; see `cases.blazze` and `cases.blazze_weights_compare` ([blazze-ranking.md](blazze-ranking.md)).
+- **Worked example:** The generated table uses the README demo tracksuit (`cases.demo_ranking`). Sparse-category edge cases are documented separately in [blazze-ranking.md](blazze-ranking.md) (not shown in the table).
 
 ## Comparability with earlier runs
 

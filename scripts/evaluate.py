@@ -621,17 +621,23 @@ def latency_exact(
     return out
 
 
-def _blazze_case(
+def _slim_ranking_rows(results: list[dict[str, object]]) -> list[dict[str, object]]:
+    return [
+        {"id": r["id"], "name": r["name"], "score": r["score"]}
+        for r in results
+        if isinstance(r.get("id"), str) and isinstance(r.get("name"), str)
+    ]
+
+
+def _demo_ranking_case(
     catalog: Catalog,
     settings: Settings,
     weights: FusionWeights,
     selected: str,
 ) -> dict[str, object]:
-    needle = "modal v back g string"
-    qrow = next(
-        (i for i, name in enumerate(catalog.product_names) if needle in name.lower()),
-        None,
-    )
+    from service.config import DEMO_QUERY_PRODUCT_ID
+
+    qrow = catalog.id_to_row.get(DEMO_QUERY_PRODUCT_ID)
     if qrow is None:
         return {"error": "query not found"}
     binary_prof = ScoringProfile()
@@ -653,12 +659,14 @@ def _blazze_case(
         weights,
     )
     catalog.active_profile = ScoringProfile()
+    before_rows = _slim_ranking_rows(before["results"])
+    after_rows = _slim_ranking_rows(after["results"])
     return {
         "query_id": catalog.uniq_ids[qrow],
-        "binary_top10": before["results"],
-        "selected_top10": after["results"],
-        "ranking_changed": [r["id"] for r in before["results"]]
-        != [r["id"] for r in after["results"]],
+        "query_name": catalog.product_names[qrow],
+        "binary_top10": before_rows,
+        "selected_top10": after_rows,
+        "ranking_changed": [r["id"] for r in before_rows] != [r["id"] for r in after_rows],
     }
 
 
@@ -1230,7 +1238,7 @@ def main() -> None:
         "title_group_hist": {"unique_groups": int(len(np.unique(catalog.title_group)))},
         "dedup_merge": dedup_stats,
         "cases": {
-            "blazze": _blazze_case(catalog, settings, sel_weights, selected),
+            "demo_ranking": _demo_ranking_case(catalog, settings, sel_weights, selected),
             "blazze_weights_compare": blazze_comparison_table(
                 catalog,
                 settings,

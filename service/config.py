@@ -9,6 +9,9 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from service.transforms import TextImageTransform
 
+# Same query as README / demo UI (Monte Carlo men's tracksuit).
+DEMO_QUERY_PRODUCT_ID = "ad8a5a196d515ef09dfdaf082bdc37c4"
+
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
