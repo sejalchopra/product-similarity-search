@@ -1,0 +1,7 @@
+[
+  {
+    "query_id": "example_query",
+    "should_include": ["example_neighbor"],
+    "should_not_include": ["example_bad"]
+  }
+]
