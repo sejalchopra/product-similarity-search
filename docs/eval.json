@@ -1,0 +1,150 @@
+{
+  "row_count": 30000,
+  "image_coverage": 0.9953666666666666,
+  "mu_transform": {
+    "raw": {
+      "text": 0.30866390466690063,
+      "image": 0.5
+    },
+    "percentile": {
+      "text": 0.5,
+      "image": 0.5
+    },
+    "tail_log": {
+      "text": 0.053735589432352904,
+      "image": 0.5
+    }
+  },
+  "shipped_transform": "tail_log",
+  "transform_experiment": {
+    "raw": {
+      "weights": {
+        "text": 0.3,
+        "image": 0.15,
+        "category": 0.15,
+        "audience": 0.08,
+        "brand": 0.1,
+        "color": 0.08,
+        "price": 0.08,
+        "rating": 0.04,
+        "weight": 0.02
+      },
+      "beta": 1.0,
+      "ndcg10": {
+        "mean": 0.08387783356070255,
+        "lo": 0.050033760173720805,
+        "hi": 0.11738334792188015
+      },
+      "hit10": {
+        "mean": 0.18,
+        "lo": 0.11,
+        "hi": 0.25
+      }
+    },
+    "percentile": {
+      "weights": {
+        "text": 0.3,
+        "image": 0.15,
+        "category": 0.15,
+        "audience": 0.08,
+        "brand": 0.1,
+        "color": 0.08,
+        "price": 0.08,
+        "rating": 0.04,
+        "weight": 0.02
+      },
+      "beta": 1.0,
+      "ndcg10": {
+        "mean": 0.08072358988027376,
+        "lo": 0.047521789399523395,
+        "hi": 0.11439858470790151
+      },
+      "hit10": {
+        "mean": 0.21,
+        "lo": 0.13,
+        "hi": 0.28025000000000005
+      }
+    },
+    "tail_log": {
+      "weights": {
+        "text": 0.3,
+        "image": 0.15,
+        "category": 0.15,
+        "audience": 0.08,
+        "brand": 0.1,
+        "color": 0.08,
+        "price": 0.08,
+        "rating": 0.04,
+        "weight": 0.02
+      },
+      "beta": 1.0,
+      "ndcg10": {
+        "mean": 0.08483170473856169,
+        "lo": 0.051241898090092365,
+        "hi": 0.11847235262826951
+      },
+      "hit10": {
+        "mean": 0.19,
+        "lo": 0.11975,
+        "hi": 0.26
+      }
+    }
+  },
+  "baselines": {
+    "popularity": {
+      "ndcg10": {
+        "mean": 0.026305138511791032,
+        "lo": 0.008469747394897444,
+        "hi": 0.0439750096967709
+      },
+      "hit10": {
+        "mean": 0.08,
+        "lo": 0.03,
+        "hi": 0.13
+      }
+    },
+    "minilm_only": {
+      "ndcg10": {
+        "mean": 0.077135699558109,
+        "lo": 0.038577555035146184,
+        "hi": 0.11268736971758961
+      },
+      "hit10": {
+        "mean": 0.17,
+        "lo": 0.09975,
+        "hi": 0.23025000000000007
+      }
+    }
+  },
+  "eval_queries": 9488,
+  "latency_exact": {
+    "p50_ms": 202.14558349999834,
+    "p95_ms": 213.76519199998825
+  },
+  "pair_active_rates": {
+    "image": 0.0,
+    "color": 1.0,
+    "price": 0.8212,
+    "rating": 0.73,
+    "weight": 0.0434
+  },
+  "title_group_hist": {
+    "unique_groups": 7603
+  },
+  "image_weight_zeroed": false,
+  "image_weight_note": "Image coverage is 0.995, above the 5% floor, so the image weight is not forced to 0. The weight stays 0 only while coverage is under 5%. Metrics elsewhere in this file are from the previous full eval, before the crawl; they were not recomputed.",
+  "image_crawl": {
+    "http_status": {
+      "200": 7,
+      "404": 137
+    },
+    "reasons": {
+      "cache_hit": 29854,
+      "empty_url": 2,
+      "downloaded": 7,
+      "http_404": 137
+    },
+    "usable_images": 29861,
+    "elapsed_sec": 15.93160416604951
+  }
+}
