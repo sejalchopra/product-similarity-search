@@ -60,8 +60,10 @@ DESIGN_PATH = ROOT / "docs" / "DESIGN.md"
 SUMMARY_PATH = ROOT / "docs" / "IMPLEMENTATION_SUMMARY.md"
 OUT = ROOT / "docs" / "eval.json"
 OUT_SMOKE = ROOT / "docs" / "eval.smoke.json"
+OUT_MEDIUM = ROOT / "docs" / "eval.medium.json"
 TUNED_PATH = ROOT / "artifacts" / "tuned_weights.json"
 TUNED_SMOKE_PATH = ROOT / "artifacts" / "tuned_weights.smoke.json"
+TUNED_MEDIUM_PATH = ROOT / "artifacts" / "tuned_weights.medium.json"
 LDJSON = (
     ROOT / "data" / "marketing_sample_for_amazon_com-amazon_fashion_products__"
     "20200201_20200430__30k_data.ldjson"
@@ -90,9 +92,22 @@ def _git_sha() -> dict[str, str]:
         return {"sha": "no-git", "status": f"git failed: {e.returncode}"}
 
 
-def _split_caps(smoke: bool) -> tuple[int | None, int | None, int | None]:
-    if smoke or os.environ.get("EVAL_SMOKE", "").strip() in ("1", "true", "yes"):
+def _eval_run_mode() -> tuple[bool, bool, int | None, int | None, int | None]:
+    """Return (smoke, capped, cap_tune, cap_val, cap_test)."""
+    medium = os.environ.get("EVAL_MEDIUM", "").strip() in ("1", "true", "yes")
+    if medium:
         return (
+            False,
+            True,
+            int(os.environ.get("EVAL_TUNE_QUERIES", "1500")),
+            int(os.environ.get("EVAL_VAL_QUERIES", "1500")),
+            int(os.environ.get("EVAL_TEST_QUERIES", "2000")),
+        )
+    smoke = os.environ.get("EVAL_SMOKE", "").strip() in ("1", "true", "yes")
+    if smoke:
+        return (
+            True,
+            True,
             int(os.environ.get("EVAL_MAX_TUNE", "400")),
             int(os.environ.get("EVAL_MAX_VAL", "200")),
             int(os.environ.get("EVAL_MAX_TEST", "200")),
@@ -100,8 +115,8 @@ def _split_caps(smoke: bool) -> tuple[int | None, int | None, int | None]:
     legacy = os.environ.get("EVAL_MAX_QUERIES", "").strip()
     if legacy.isdigit():
         q = int(legacy)
-        return q, q, q
-    return None, None, None
+        return True, True, q, q, q
+    return False, False, None, None, None
 
 
 def _groups_hash(train_g: set[int], val_g: set[int], test_g: set[int]) -> str:
@@ -740,16 +755,17 @@ def main() -> None:
     t_start = time.perf_counter()
     progress_start()
     progress_log("starting")
-    cap_tune, cap_val, cap_test = _split_caps(False)
-    smoke = os.environ.get("EVAL_SMOKE", "").strip() in ("1", "true", "yes")
-    legacy = os.environ.get("EVAL_MAX_QUERIES", "").strip()
-    if legacy.isdigit():
-        cap_tune = cap_val = cap_test = int(legacy)
-        smoke = True
-    if cap_tune is not None:
-        smoke = True
-    out_path = OUT_SMOKE if smoke else OUT
-    tuned_out = TUNED_SMOKE_PATH if smoke else TUNED_PATH
+    smoke, capped, cap_tune, cap_val, cap_test = _eval_run_mode()
+    medium = capped and not smoke
+    if smoke:
+        out_path = OUT_SMOKE
+        tuned_out = TUNED_SMOKE_PATH
+    elif medium:
+        out_path = OUT_MEDIUM
+        tuned_out = TUNED_MEDIUM_PATH
+    else:
+        out_path = OUT
+        tuned_out = TUNED_PATH
 
     settings = Settings()
     artifacts = settings.artifacts_dir
@@ -770,8 +786,8 @@ def main() -> None:
     tune_rows = cap_rows(tune_all, cap_tune)
     val_rows = cap_rows(val_all, cap_val)
     test_rows = cap_rows(test_all, cap_test)
-    min_tune = int(os.environ.get("EVAL_TUNE_QUERIES", str(MIN_TUNE_QUERIES)))
-    if not smoke and len(tune_rows) < min_tune:
+    min_tune = int(os.environ.get("EVAL_TUNE_QUERIES_MIN", str(MIN_TUNE_QUERIES)))
+    if not smoke and not medium and len(tune_rows) < min_tune:
         raise SystemExit(f"Need >={min_tune} train queries for tuning; got {len(tune_rows)}")
     split_info = {
         "train_groups": len(train_g),
@@ -785,7 +801,7 @@ def main() -> None:
         "validation_queries": len(val_rows),
         "test_queries": len(test_rows),
     }
-    mode = "smoke" if smoke else "full"
+    mode = "smoke" if smoke else ("medium" if medium else "full")
     progress_log(f"{mode} eval: {split_info}")
 
     image_cov = float(catalog.manifest.get("image_coverage", 0.0) or 0.0)
@@ -1131,8 +1147,13 @@ def main() -> None:
         test_full=len(test_all),
     )
 
+    query_caps = (
+        {"tune": cap_tune, "validation": cap_val, "test": cap_test} if capped else None
+    )
     report: dict[str, Any] = {
         "smoke": smoke,
+        "capped": capped,
+        "query_caps": query_caps,
         "fast_eval": False,
         "fast_eval_note": (
             "fast_eval is false. EVAL_SMOKE only caps tune, validation, and test query "
@@ -1151,6 +1172,9 @@ def main() -> None:
             "config": {
                 "search_mode": settings.search_mode,
                 "eval_tune_queries_min": min_tune,
+                "eval_tune_queries_cap": cap_tune,
+                "eval_val_queries_cap": cap_val,
+                "eval_test_queries_cap": cap_test,
                 "n_bootstrap": N_BOOT_DEFAULT,
             },
         },
@@ -1223,11 +1247,12 @@ def main() -> None:
 
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_text(json.dumps(report, indent=2))
+    weight_source = "smoke" if smoke else ("medium" if medium else "full")
     _write_tuned_weights(
         tuned_out,
         sel_weights,
         selected,
-        "smoke" if smoke else "full",
+        weight_source,
         split_info,
         selection_reason=selection_reason,
         transform_reason=transform_reason,
@@ -1236,7 +1261,7 @@ def main() -> None:
     progress_log(f"finished in {runtime:.1f}s — wrote {out_path} and {tuned_out}")
     print(f"Wrote {out_path}")
 
-    if smoke:
+    if smoke or medium:
         return
 
     render_design(report, DESIGN_PATH)

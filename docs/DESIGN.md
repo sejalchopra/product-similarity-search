@@ -2,6 +2,8 @@
 
 All metrics below are copied from [`eval.json`](eval.json) (`make eval`). Do not hand-edit numbers in the eval region.
 
+**Eval tiers:** `make eval-smoke` (400/200/200 queries) and `make eval-medium` (default 1500/1500/2000, capped, writes `docs/eval.medium.json` only) use the same pipeline as `make eval` but do not overwrite `docs/eval.json`. Pool stages resume from `artifacts/eval_cache/`. Only `make eval` refreshes this document.
+
 <!-- current_state:start -->
 ## Current state (from eval.json)
 

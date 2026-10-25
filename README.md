@@ -134,7 +134,9 @@ Ref: [Kaggle](https://www.kaggle.com/datasets/promptcloud/amazon-fashion-product
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt -r requirements-dev.txt
 make index          # builds artifacts/ (use full index without --skip-images for CLIP)
-make eval           # writes docs/eval.json
+make eval-smoke     # fast capped run → docs/eval.smoke.json (gitignored)
+make eval-medium    # larger capped run → docs/eval.medium.json (gitignored); see logs/eval-medium.log
+make eval           # full uncapped run → docs/eval.json (promotes metrics to DESIGN.md)
 make run-local      # http://localhost:8000/docs
 ```
 

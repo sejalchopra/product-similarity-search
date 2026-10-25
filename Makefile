@@ -1,4 +1,4 @@
-.PHONY: lint test build run-local index eval eval-smoke promote-smoke bench
+.PHONY: lint test build run-local index eval eval-smoke eval-medium promote-smoke bench
 
 PYTHON ?= python3
 ifeq ($(wildcard .venv/bin/python),)
@@ -32,6 +32,14 @@ eval:
 
 eval-smoke:
 	EVAL_SMOKE=1 EVAL_MAX_TUNE=400 EVAL_MAX_VAL=200 EVAL_MAX_TEST=200 PYTHONPATH=. $(PY) scripts/evaluate.py
+
+EVAL_TUNE_QUERIES ?= 1500
+EVAL_VAL_QUERIES ?= 1500
+EVAL_TEST_QUERIES ?= 2000
+
+eval-medium:
+	@mkdir -p logs
+	EVAL_MEDIUM=1 EVAL_TUNE_QUERIES=$(EVAL_TUNE_QUERIES) EVAL_VAL_QUERIES=$(EVAL_VAL_QUERIES) EVAL_TEST_QUERIES=$(EVAL_TEST_QUERIES) PYTHONPATH=. $(PY) scripts/evaluate.py
 
 promote-smoke:
 	CONFIRM=1 PYTHONPATH=. $(PY) scripts/promote_smoke.py
