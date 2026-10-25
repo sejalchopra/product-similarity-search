@@ -61,17 +61,6 @@ Rank 1 is the other Blazze G-string (raw text cosine 0.981). It is not the same 
 
 ## Tuned weights and same-category rate
 
-`docs/eval.json` `transform_experiment.tail_log.weights` and `artifacts/tuned_weights.json` are the same vector: text 0.30, image 0.15, category 0.15, audience 0.08, brand 0.10, color 0.08, price 0.08, rating 0.04, weight 0.02. Beta 1.0. Transform `tail_log`.
+Shipped weights are in `artifacts/tuned_weights.json`: text 0.30, image 0.15, category 0.15, audience 0.08, brand 0.10, color 0.08, price 0.08, rating 0.04, weight 0.02. Transform `tail_log`. Weight search did not replace them; see `guardrails.accepted_tuned` in `docs/eval.json`.
 
-Same-category share of top-10 slots, recomputed with the current catalog and the `evaluate.py` holdout (`random.Random(1)`, 20% of title groups among co-purchase queries). That split is **4,256** queries. `eval.json` still says 9,488, from a run whose catalog had 7,603 title groups. The current catalog has 21,636, so the same function holds out fewer rows. The shares below are the current split, not the frozen 9,488.
-
-A slot matches when `category_code` equals the query's. Text-only is the MiniLM cosine baseline (drop the query title group, one row per other group). Fusion is `find_similar_products` with the shipped weights, exact mode, 10 results. Every query returned 10 (42,560 slots).
-
-| Ranker | Matching slots | Share |
-|--------|----------------|------:|
-| Text-only | 27,922 / 42,560 | 65.6% |
-| Fusion, shipped | 40,937 / 42,560 | 96.2% |
-
-Among the 4,086 queries that have a child category: text-only 27,207 / 40,860 (66.6%), fusion 40,038 / 40,860 (98.0%).
-
-The 96% figure is the usual case, where the child category is large enough for a 0.15 bonus to fill the top 10. This query is the exception: `MensThongUnderwear` has one neighbor, so fusion can place only one same-category item in the top 10, and it does.
+The current catalog has 21,627 title groups (`title_group_hist.unique_groups`). Same-child share on the capped test split is `guardrails_test.shipped.same_child_share10` in that file. This query is the sparse case: `MensThongUnderwear` has one other product, so fusion can place only one same-category item in the top 10, and it does.

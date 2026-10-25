@@ -102,7 +102,7 @@ Metrics below are computed **once** on the held-out test split after selection. 
 | MiniLM-only | {_fmt_ci(mini.get("ndcg10") if isinstance(mini, dict) else None)} | {_fmt_ci(mini.get("hit10") if isinstance(mini, dict) else None)} |
 | Popularity (same child) | {_fmt_ci(pop.get("ndcg10") if isinstance(pop, dict) else None)} | {_fmt_ci(pop.get("hit10") if isinstance(pop, dict) else None)} |
 
-Validation scores for transforms and variants: `eval.json` → `validation_transform_ndcg10`, `validation_variant`.
+Validation scores for transforms and variants: `eval.json` → `validation_transform_ndcg10_pooled`, `validation_variant_ndcg10_pooled`.
 
 Pair-active rates: color {pair.get("color")}, price {pair.get("price")}, rating {pair.get("rating")}, weight {pair.get("weight")}, image {pair.get("image")}.
 

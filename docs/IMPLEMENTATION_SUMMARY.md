@@ -147,20 +147,18 @@ See [README.md](../README.md) for the **Monte Carlo tracksuit** walkthrough (`ad
 
 ### Scripts
 
-- **`scripts/evaluate.py`** — main entry for `make eval`:
-  - Refuses to run if **`FAST_EVAL`** is set.
-  - Train/test split by **title group** (80/20); tune on up to **200 train queries** disjoint from test.
-  - **Coordinate ascent** weight search (multipliers 0, 0.5, 2 on each block, two passes) with **`search_trace`** per transform.
-  - Compares transforms **raw / percentile / tail_log** on held-out test with **cluster bootstrap** CIs.
-  - Runs variants **binary, A, B, A+B** with per-variant tuning and metrics: NDCG@10, hit@10, same-child share, same-family share.
-  - **Selection rule**: pick tune NDCG winner only if test CI for NDCG vs simpler rival **excludes 0**; else keep simpler variant.
-  - Writes **`docs/eval.json`**, **`artifacts/tuned_weights.json`**, **`cases.blazze`** top-10 table, calls **`scripts/eval/render_design.py`** to refresh DESIGN between `<!-- eval:start -->` / `<!-- eval:end -->`.
+- **`scripts/evaluate.py`** — main entry for `make eval`, `make eval-smoke`, and `make eval-medium`. Helpers live in **`scripts/eval/`**.
+  - Splits queries by **title group** into tune, validation, and test. The shipped report is the capped run: 1,500 tune, 1,500 validation, 2,000 test.
+  - Compares transforms **raw / percentile / tail_log** on validation. **tail_log** shipped.
+  - Compares category variants on validation. **binary** shipped. A weight-search candidate was rejected by the same-child guardrail; hand-set weights remain in `artifacts/tuned_weights.json`.
+  - Reports test NDCG@10 and hit@10 for fusion, MiniLM-only, and popularity, with paired cluster-bootstrap CIs.
+  - Writes **`docs/eval.json`** and calls **`scripts/eval/render_design.py`** and **`scripts/eval/render_state.py`** to refresh the generated blocks in DESIGN.md and this file.
 
-- **`scripts/eval_tune.py`** — coordinate ascent, cluster bootstrap (resample **title groups**, not individual queries).
+- **`scripts/eval/tune.py`** — weight search. **`scripts/eval/bootstrap.py`** resamples **title groups**, not individual queries.
 
 ### Tests (`tests/`)
 
-37 tests including: dedup/title groups, explore contribution identity and parity with `/find_similar_products` in exact mode, masks, `/eval`, affinity symmetry and brief-vs-T-shirt fixture, API/scoring regressions.
+`make test` covers dedup and title groups, explore contribution identity and parity with `/find_similar_products`, masks, `/eval` keys the demo reads, affinity, and API regressions.
 
 ### Quality gate
 
@@ -168,7 +166,7 @@ See [README.md](../README.md) for the **Monte Carlo tracksuit** walkthrough (`ad
 
 ### Eval artifacts status
 
-**`docs/eval.json` and the DESIGN eval block reflect the last successful `make eval` run.** A full eval can take many hours (exact scoring + cluster bootstrap on thousands of queries). After completion, expect updated title-group counts, `fast_eval: false`, `variant_experiment`, `weight_search`, `cases.blazze`, and regenerated DESIGN numbers. Until then, the **Evidence panel** shows whatever is on disk.
+**`docs/eval.json`**, the generated blocks in DESIGN.md, and the demo Evidence panel are the same capped run (`smoke: false`). Do not compare them with older group counts from before title-group dedup.
 
 ### Diagnosis doc
 
@@ -222,8 +220,8 @@ Metrics use **co-purchase relevance**: other products whose normalized title app
 | **same_family_share10** | Same **family key** (broader than child category) | Useful for underwear vs T-shirt style questions. |
 | **pair_active_rates** | How often random pairs have both sides observed | Explains dead blocks (e.g. weight ~4%). |
 | **baselines** | `popularity`, `minilm_only` | Fusion should beat these if the design helps; small gains are still meaningful if CIs don’t overlap. |
-| **validation_transform_ndcg10** | Per-transform validation NDCG | Chooses shipped text/image transform. |
-| **validation_variant** | Per-variant validation NDCG/hit | Chooses `selected_variant` (no test CIs in selection). |
+| **validation_transform_ndcg10_pooled** | Per-transform validation NDCG | Chooses shipped text/image transform. |
+| **validation_variant_ndcg10_pooled** | Per-variant validation NDCG | Chooses `selected_variant`. |
 | **weight_search.search_trace** | Dirichlet + coordinate steps | If final weights equal start, read **`unchanged_reason`**. |
 | **selected_variant** / **selection_reason** | A, B, A+B, or binary | Profile after validation selection. |
 | **cases.blazze** | Top 10 under binary vs selected | Qualitative sanity check; see also [blazze-ranking.md](blazze-ranking.md). |
@@ -236,7 +234,7 @@ When many blocks are imputed equally for all candidates, **order is decided by t
 
 ## E. Latency (`latency_exact`)
 
-`find_similar_p50_ms` / `find_similar_p95_ms` (lean `/find_similar_products`) vs `metadata_p50_ms` / `metadata_p95_ms` (full catalog with block metadata). See eval.json after `make eval`.
+`latency_exact.find_similar_p50_ms` and `find_similar_p95_ms` are the lean `/find_similar_products` timings. `explore_p50_ms` is the full-catalog explore timing. The Evidence panel does not display these; it reads the test metrics listed above.
 
 ---
 

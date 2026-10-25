@@ -49,7 +49,7 @@ Metrics below are computed **once** on the held-out test split after selection. 
 | MiniLM-only | 0.248 [0.232, 0.265] | 0.556 [0.527, 0.586] |
 | Popularity (same child) | 0.052 [0.045, 0.060] | 0.157 [0.139, 0.175] |
 
-Validation scores for transforms and variants: `eval.json` → `validation_transform_ndcg10`, `validation_variant`.
+Validation scores for transforms and variants: `eval.json` → `validation_transform_ndcg10_pooled`, `validation_variant_ndcg10_pooled`.
 
 Pair-active rates: color 0.2382, price 0.8212, rating 0.73, weight 0.0434, image 0.9953666666666666.
 

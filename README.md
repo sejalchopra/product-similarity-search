@@ -37,8 +37,12 @@ container port 8000. `imagePullPolicy` is `IfNotPresent`, so load the image into
 the cluster before the pod can start.
 
 Embeddings are already in `artifacts/`, so startup does not download models. The
-catalog ldjson is already in `data/`. `make index` rebuilds the embeddings and
-needs `requirements-index.txt` (PyTorch). Run that only if the catalog changes.
+catalog is already unzipped at
+`data/marketing_sample_for_amazon_com-amazon_fashion_products__20200201_20200430__30k_data.ldjson`
+(about 71 MB). `data/archive.zip` is not in git. If that ldjson is missing and you
+have the zip, run `cd data && unzip archive.zip`. `make index` rebuilds the
+embeddings and needs `requirements-index.txt` (PyTorch). Run that only if the
+catalog changes.
 
 ## API
 
