@@ -35,8 +35,7 @@ def _ranking_case_table(case: dict[str, object]) -> str:
             bsc = f"{float(bs):.3f}" if isinstance(bs, (int, float)) else "—"
             asc = f"{float(as_):.3f}" if isinstance(as_, (int, float)) else "—"
             lines.append(
-                f"| {i + 1} | {b.get('name', '—')} ({bsc}) | "
-                f"{a.get('name', '—')} ({asc}) |"
+                f"| {i + 1} | {b.get('name', '—')} ({bsc}) | {a.get('name', '—')} ({asc}) |"
             )
     changed = case.get("ranking_changed")
     lines.append("")
